@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Senparc.Weixin;
+using Senparc.Weixin.Entities;
+using Senparc.Weixin.RegisterServices;
 
 namespace ACBC
 {
@@ -53,7 +56,6 @@ namespace ACBC
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseCors("AllowSameDomain");
             app.UseMvc();
         }

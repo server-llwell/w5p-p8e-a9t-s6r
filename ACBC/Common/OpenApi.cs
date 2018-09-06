@@ -10,6 +10,8 @@ namespace ACBC.Common
     /// </summary>
     public enum ApiType
     {
+        OpenApi,
+        UserApi,
         DemoApi,
         UploadApi,
     }
@@ -65,6 +67,34 @@ namespace ACBC.Common
         public override ApiType GetApiType()
         {
             return ApiType.DemoApi;
+        }
+
+    }
+
+    public class OpenApi : BaseApi
+    {
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Open;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.UserApi;
+        }
+
+    }
+
+    public class UserApi : BaseApi
+    {
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Token;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.UserApi;
         }
 
     }

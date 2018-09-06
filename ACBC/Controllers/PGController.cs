@@ -12,14 +12,22 @@ namespace ACBC.Controllers
     [Produces("application/json")]
     [Route(Global.ROUTE_PX + "/[controller]/[action]")]
     [EnableCors("AllowSameDomain")]
-    public class CoreController : Controller
+    public class PGController : Controller
     {
         [HttpPost]
-        public ActionResult Demos([FromBody]DemoApi demoApi)
+        public ActionResult Open([FromBody]OpenApi openApi)
         {
-            if (demoApi == null)
+            if (openApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
-            return Json(Global.BUSS.BodyBussResults(this, demoApi));
+            return Json(Global.BUSS.BodyBussResults(this, openApi));
+        }
+
+        [HttpPost]
+        public ActionResult User([FromBody]UserApi userApi)
+        {
+            if (userApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BodyBussResults(this, userApi));
         }
 
     }

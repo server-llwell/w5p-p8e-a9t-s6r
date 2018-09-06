@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using Senparc.Weixin.WxOpen.Containers;
 
 namespace ACBC.Buss
 {
@@ -95,33 +96,10 @@ namespace ACBC.Buss
             Message msg = null;
             if (baseApi.code != null)
             {
-                using (var client = ConnectionMultiplexer.Connect(Global.REDIS))
+                SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+                if (sessionBag == null)
                 {
-                    try
-                    {
-                        var db = client.GetDatabase(Global.REDIS_NO);
-                        var tokenRedis = db.StringGet(baseApi.code);
-                        string tokenRedisStr = tokenRedis.ToString();
-                        if (baseApi.token != tokenRedisStr)
-                        {
-                            Console.WriteLine(tokenRedis);
-                            msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
-                        }
-                        else
-                        {
-                            AuthDao authDao = new AuthDao();
-                            if (!authDao.CheckAuth("/" + route, baseApi.code))
-                            {
-                                Console.WriteLine(tokenRedis);
-                                msg = new Message(CodeMessage.InterfaceRole, "InterfaceRole");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.StackTrace);
-                        msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
-                    }
+                    msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                 }
             }
             else
