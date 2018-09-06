@@ -1,4 +1,5 @@
 ﻿using ACBC.Common;
+using ACBC.Dao;
 using Newtonsoft.Json;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
@@ -17,9 +18,9 @@ namespace ACBC.Buss
             return ApiType.OpenApi;
         }
 
-        public object Do_Login(object param)
+        public object Do_Login(BaseApi baseApi)
         {
-            LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(param.ToString());
+            LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(baseApi.param.ToString());
             if (loginParam == null)
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
@@ -30,7 +31,17 @@ namespace ACBC.Buss
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
-                return new { sessionId = sessionBag.Key };
+                UsersDao usersDao = new UsersDao();
+                var shopUser = usersDao.GetShopUser(jsonResult.openid);
+                if(shopUser != null)
+                {
+                    return new { token = sessionBag.Key, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
+                }
+                else
+                {
+                    return new { token = sessionBag.Key };
+                }
+                
             }
             else
             {

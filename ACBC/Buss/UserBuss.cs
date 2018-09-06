@@ -1,4 +1,5 @@
 ﻿using ACBC.Common;
+using ACBC.Dao;
 using Newtonsoft.Json;
 using Senparc.Weixin.WxOpen.Entities;
 using Senparc.Weixin.WxOpen.Helpers;
@@ -12,15 +13,15 @@ namespace ACBC.Buss
             return ApiType.UserApi;
         }
 
-        public object Do_CheckSignature(object param)
+        public object Do_CheckSignature(BaseApi baseApi)
         {
-            CheckSignatureParam checkSignatureParam = JsonConvert.DeserializeObject<CheckSignatureParam>(param.ToString());
+            CheckSignatureParam checkSignatureParam = JsonConvert.DeserializeObject<CheckSignatureParam>(baseApi.param.ToString());
             if (checkSignatureParam == null)
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            var checkSuccess = EncryptHelper.CheckSignature(checkSignatureParam.token, checkSignatureParam.rawData, checkSignatureParam.signature);
+            var checkSuccess = EncryptHelper.CheckSignature(baseApi.token, checkSignatureParam.rawData, checkSignatureParam.signature);
             if (checkSuccess)
             {
                 return new { check = checkSuccess };
@@ -31,9 +32,9 @@ namespace ACBC.Buss
             }
         }
 
-        public object Do_DecodeEncryptedData(object param)
+        public object Do_DecodeEncryptedData(BaseApi baseApi)
         {
-            DecodeEncryptedDataParam decodeEncryptedDataParam = JsonConvert.DeserializeObject<DecodeEncryptedDataParam>(param.ToString());
+            DecodeEncryptedDataParam decodeEncryptedDataParam = JsonConvert.DeserializeObject<DecodeEncryptedDataParam>(baseApi.param.ToString());
             if (decodeEncryptedDataParam == null)
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
@@ -44,7 +45,7 @@ namespace ACBC.Buss
             {
                 case "USERINFO"://wx.getUserInfo()
                     decodedEntity = EncryptHelper.DecodeUserInfoBySessionId(
-                        decodeEncryptedDataParam.token,
+                        baseApi.token,
                         decodeEncryptedDataParam.encryptedData, decodeEncryptedDataParam.iv);
                     break;
                 default:
@@ -67,20 +68,54 @@ namespace ACBC.Buss
             }
         }
 
+        public object Do_BindShop(BaseApi baseApi)
+        {
+            BindShopParam bindShopParam = JsonConvert.DeserializeObject<BindShopParam>(baseApi.param.ToString());
+            if (bindShopParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            UsersDao usersDao = new UsersDao();
+            string openID = Global.GetOpenID(baseApi.token);
+            var shopUser = usersDao.GetShopUser(openID);
+            if(shopUser != null)
+            {
+                throw new ApiException(CodeMessage.BindShopUserExist, "BindShopUserExist");
+            }
+            var shop = usersDao.GetShopByCode(bindShopParam.shopCode);
+            if(shop == null)
+            {
+                throw new ApiException(CodeMessage.BindShopInvalidCode, "BindShopInvalidCode");
+            }
+            if(!usersDao.BindShop(bindShopParam, openID, shop.shopId))
+            {
+                throw new ApiException(CodeMessage.BindShopError, "BindShopError");
+            }
+            return "";
+        }
     }
 
-    
+    public class BindShopParam
+    {
+        public string shopCode;
+        public string avatarUrl;
+        public string city;
+        public string country;
+        public string gender;
+        public string language;
+        public string nickName;
+        public string province;
+    }
 
     public class CheckSignatureParam
     {
-        public string token;
         public string rawData;
         public string signature;
     }
 
     public class DecodeEncryptedDataParam
     {
-        public string token;
         public string type;
         public string encryptedData;
         public string iv;

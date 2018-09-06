@@ -94,7 +94,7 @@ namespace ACBC.Buss
         private Message CheckToken(BaseApi baseApi, string route)
         {
             Message msg = null;
-            if (baseApi.code != null)
+            if (baseApi.token != null)
             {
                 SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
                 if (sessionBag == null)

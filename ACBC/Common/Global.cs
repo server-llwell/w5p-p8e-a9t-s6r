@@ -5,6 +5,7 @@ using System;
 using StackExchange.Redis;
 using Senparc.Weixin.Cache.Redis;
 using Senparc.Weixin.Cache;
+using Senparc.Weixin.WxOpen.Containers;
 
 namespace ACBC.Common
 {
@@ -40,26 +41,27 @@ namespace ACBC.Common
             }
         }
 
-        //public static string TokenIntoRedis(string code)
-        //{
-        //    using (var client = ConnectionMultiplexer.Connect(REDIS))
-        //    {
-        //        var db = client.GetDatabase(REDIS_NO);
-        //        var expiry = new TimeSpan(0, 0, REDIS_EXPIRY);
-        //        var token = Guid.NewGuid().ToString();
-        //        bool b = db.StringSet(code, token, expiry);
-
-        //        return token;
-        //    }
-        //}
+        /// <summary>
+        /// 获取系统已登录用户OPENID
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static string GetOpenID(string token)
+        {
+            SessionBag sessionBag = SessionContainer.GetSession(token);
+            if (sessionBag == null)
+            {
+                return null;
+            }
+            return sessionBag.OpenId;
+        }
 
         public static string REDIS
         {
             get
             {
 #if DEBUG
-                //var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
-                var redis = "localhost:6379";
+                var redis = System.Environment.GetEnvironmentVariable("redis", EnvironmentVariableTarget.User);
 #endif
 #if !DEBUG
                 var redis = "redis-api";

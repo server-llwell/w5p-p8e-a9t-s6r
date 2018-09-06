@@ -23,7 +23,7 @@ namespace ACBC.Controllers
         }
 
         [HttpPost]
-        public ActionResult User([FromBody]UserApi userApi)
+        public ActionResult Users([FromBody]UserApi userApi)
         {
             if (userApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));

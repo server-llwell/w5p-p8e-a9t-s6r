@@ -26,6 +26,7 @@ namespace ACBC.Common
     public abstract class BaseApi
     {
         public string appId;
+        public string lang;
         public string code;
         public string method;
         public string token;
@@ -54,23 +55,6 @@ namespace ACBC.Common
 
     }
 
-    /// <summary>
-    /// Demo类API
-    /// </summary>
-    public class DemoApi : BaseApi
-    {
-        public override CheckType GetCheckType()
-        {
-            return CheckType.Sign;
-        }
-
-        public override ApiType GetApiType()
-        {
-            return ApiType.DemoApi;
-        }
-
-    }
-
     public class OpenApi : BaseApi
     {
         public override CheckType GetCheckType()
@@ -80,13 +64,14 @@ namespace ACBC.Common
 
         public override ApiType GetApiType()
         {
-            return ApiType.UserApi;
+            return ApiType.OpenApi;
         }
 
     }
 
     public class UserApi : BaseApi
     {
+
         public override CheckType GetCheckType()
         {
             return CheckType.Token;
