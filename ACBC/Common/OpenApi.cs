@@ -23,6 +23,12 @@ namespace ACBC.Common
         Sign,
     }
 
+    public enum InputType
+    {
+        Header,
+        Body,
+    }
+
     public abstract class BaseApi
     {
         public string appId;
@@ -36,6 +42,7 @@ namespace ACBC.Common
 
         public abstract CheckType GetCheckType();
         public abstract ApiType GetApiType();
+        public abstract InputType GetInputType();
     }
 
     /// <summary>
@@ -46,6 +53,11 @@ namespace ACBC.Common
         public override CheckType GetCheckType()
         {
             return CheckType.Open;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Header;
         }
 
         public override ApiType GetApiType()
@@ -62,6 +74,11 @@ namespace ACBC.Common
             return CheckType.Open;
         }
 
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
         public override ApiType GetApiType()
         {
             return ApiType.OpenApi;
@@ -75,6 +92,11 @@ namespace ACBC.Common
         public override CheckType GetCheckType()
         {
             return CheckType.Token;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
         }
 
         public override ApiType GetApiType()
