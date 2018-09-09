@@ -12,6 +12,7 @@ namespace ACBC.Common
     {
         OpenApi,
         UserApi,
+        ShopApi,
         DemoApi,
         UploadApi,
     }
@@ -102,6 +103,26 @@ namespace ACBC.Common
         public override ApiType GetApiType()
         {
             return ApiType.UserApi;
+        }
+
+    }
+
+    public class ShopApi : BaseApi
+    {
+
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Token;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.ShopApi;
         }
 
     }

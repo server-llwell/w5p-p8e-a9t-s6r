@@ -35,5 +35,7 @@ namespace ACBC.Common
         BindShopUserExist = 10001,
         BindShopInvalidCode = 10002,
         BindShopError = 10003,
+
+        InvalidScanCode = 10101,
     }
 }
