@@ -32,25 +32,7 @@ namespace ACBC.Dao
             return shopUser;
         }
 
-        public Shop GetShop(string openID, string lang)
-        {
-            Shop shop = null;
-
-            StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(UsersSqls.SELECT_SHOP_BY_OPENID, openID);
-            string sql = builder.ToString();
-            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null && dt.Rows.Count == 1)
-            {
-                shop = new Shop
-                {
-                    shopName = dt.Rows[0]["SHOP_NAME_" + lang.ToUpper()].ToString(),
-                    shopId = dt.Rows[0]["SHOP_ID"].ToString(),
-                };
-            }
-
-            return shop;
-        }
+        
 
         public Shop GetShopByCode(string shopCode)
         {
@@ -97,11 +79,6 @@ namespace ACBC.Dao
             + "SELECT * "
             + "FROM T_BASE_SHOP_USER "
             + "WHERE SHOP_USER_OPENID = '{0}'";
-        public const string SELECT_SHOP_BY_OPENID = ""
-            + "SELECT * "
-            + "FROM T_BASE_SHOP_USER A, T_BASE_SHOP B "
-            + "WHERE A.SHOP_ID = B.SHOP_ID "
-            + "AND A.SHOP_USER_OPENID = '{0}'";
         public const string SELECT_BIND_SHOP_BY_CODE = ""
             + "SELECT * "
             + "FROM T_BASE_SHOP A, T_BUSS_SHOP_CODE B "
@@ -124,9 +101,5 @@ namespace ACBC.Dao
         public string shopUserImg;
     }
 
-    public class Shop
-    {
-        public string shopId;
-        public string shopName;
-    }
+    
 }
