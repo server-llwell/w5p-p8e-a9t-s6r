@@ -31,7 +31,7 @@ namespace ACBC.Controllers
         }
 
         [HttpPost]
-        public ActionResult Users([FromBody]ShopApi shopApi)
+        public ActionResult Shop([FromBody]ShopApi shopApi)
         {
             if (shopApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
