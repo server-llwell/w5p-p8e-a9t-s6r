@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ACBC.Controllers
 {
     [Produces("application/json")]
+    [Consumes("multipart/form-data", "application/json")]
     [Route(Global.ROUTE_PX + "/[controller]/[action]")]
     [EnableCors("AllowSameDomain")]
     public class PGController : Controller
@@ -36,6 +37,12 @@ namespace ACBC.Controllers
             if (shopApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
             return Json(Global.BUSS.BussResults(this, shopApi));
+        }
+
+        [HttpPost]
+        public ActionResult Upload(IFormCollection param)
+        {
+            return Json(Global.BUSS.BussResults(this, new UploadApi { param = param }));
         }
     }
 }
