@@ -40,5 +40,6 @@ namespace ACBC.Common
         InvalidShopId = 10102,
 
         InvalidScanCode = 10201,
+        UploadOSSError = 10202,
     }
 }
