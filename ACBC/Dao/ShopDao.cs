@@ -115,8 +115,10 @@ namespace ACBC.Dao
                     {
                         recordId = dr["RECORD_ID"].ToString(),
                         recordTime = dr["RECORD_TIME"].ToString(),
+                        userName = dr["USER_NAME"].ToString(),
                         total = (double)dr["TOTAL"],
                         shopMoney = (double)dr["SHOP_MONEY"],
+                        shopRate = ((double)dr["SHOP_RATE"]*100) + "%",
                         recordCode = dr["RECORD_CODE"].ToString(),
                         recordCodeImg = dr["RECORD_CODE_IMG"].ToString(),
                         payState = dr["PAY_STATE"].ToString(),
@@ -154,8 +156,9 @@ namespace ACBC.Dao
             + "VALUES(NOW(),{0},{1},{2},{3},{4},{5},{6},{7},'{8}','{9}',{10},{11},{12})";
         public const string SELECT_SHOP_RECORD_BY_SHOP_ID_AND_PAY_STATE = ""
             + "SELECT * "
-            + "FROM T_BUSS_RECORD "
-            + "WHERE SHOP_ID = '{0}' "
+            + "FROM T_BUSS_RECORD A, T_BASE_USER B "
+            + "WHERE A.USER_ID = B.USER_ID "
+            + "AND SHOP_ID = '{0}' "
             + "AND PAY_STATE = {1} "
             + "ORDER BY RECORD_TIME DESC";
     }
@@ -179,6 +182,8 @@ namespace ACBC.Dao
         public string recordId;
         public string recordTime;
         public double total;
+        public string userName;
+        public string shopRate;
         public double shopMoney;
         public string recordCode;
         public string recordCodeImg;
