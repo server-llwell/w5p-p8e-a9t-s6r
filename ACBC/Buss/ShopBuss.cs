@@ -59,13 +59,13 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidShopId, "InvalidShopId");
             }
 
-            string fileUrl = OssManager.UploadFileToOSS(submitParam.ticketImg, Global.OssDir, submitParam.ticketImg);
-            if(fileUrl == "")
-            {
-                throw new ApiException(CodeMessage.UploadOSSError, "UploadOSSError");
-            }
+            //string fileUrl = OssManager.UploadFileToOSS(submitParam.ticketImg, Global.OssDir, submitParam.ticketImg);
+            //if(fileUrl == "")
+            //{
+            //    throw new ApiException(CodeMessage.UploadOSSError, "UploadOSSError");
+            //}
 
-            submitParam.ticketImg = fileUrl;
+            //submitParam.ticketImg = fileUrl;
             if(submitParam.inputState == 1)
             {
                 submitParam.total = -submitParam.total;
