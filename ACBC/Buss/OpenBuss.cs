@@ -35,11 +35,11 @@ namespace ACBC.Buss
                 var shopUser = usersDao.GetShopUser(jsonResult.openid);
                 if(shopUser != null)
                 {
-                    return new { token = sessionBag.Key, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
+                    return new { token = sessionBag.Key, isReg = true, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
                 }
                 else
                 {
-                    return new { token = sessionBag.Key };
+                    return new { token = sessionBag.Key, isReg = false };
                 }
                 
             }
