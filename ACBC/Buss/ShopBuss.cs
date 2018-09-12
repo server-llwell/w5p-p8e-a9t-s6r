@@ -146,6 +146,18 @@ namespace ACBC.Buss
                 }
             }
 
+            sumTotalUnPay = Math.Round(sumTotalUnPay,2);
+            sumReturnTotalUnPay = Math.Round(sumReturnTotalUnPay, 2);
+            sumShopMoneyUnPay = Math.Round(sumShopMoneyUnPay, 2);
+
+            sumTotalPay = Math.Round(sumTotalPay, 2);
+            sumReturnTotalPay = Math.Round(sumReturnTotalPay, 2);
+            sumShopMoneyPay = Math.Round(sumShopMoneyPay, 2);
+
+            sumTotalAll = Math.Round(sumTotalAll, 2);
+            sumReturnTotalAll = Math.Round(sumReturnTotalAll, 2);
+            sumShopMoneyAll = Math.Round(sumShopMoneyAll, 2);
+
             return new {
                 all = new { listAll, sumTotalAll, sumReturnTotalAll, sumShopMoneyAll },
                 unPay = new { listUnPay, sumTotalUnPay, sumReturnTotalUnPay, sumShopMoneyUnPay },
