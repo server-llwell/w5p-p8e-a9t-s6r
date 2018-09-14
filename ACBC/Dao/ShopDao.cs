@@ -45,6 +45,8 @@ namespace ACBC.Dao
                 {
                     shopName = dt.Rows[0]["SHOP_NAME_" + lang.ToUpper()].ToString(),
                     shopId = dt.Rows[0]["SHOP_ID"].ToString(),
+                    shopRate = (double)dt.Rows[0]["SHOP_RATE"],
+                    shopCode = dt.Rows[0]["SHOP_CODE"].ToString(),
                 };
             }
 
@@ -169,6 +171,7 @@ namespace ACBC.Dao
         public string shopName;
         public double shopRate;
         public double userRate;
+        public string shopCode;
     }
 
     public class User
