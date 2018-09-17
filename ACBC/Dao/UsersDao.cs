@@ -71,6 +71,28 @@ namespace ACBC.Dao
             list.Add(sqlUpdate);
             return DatabaseOperationWeb.ExecuteDML(list);
         }
+
+        public User GetUser(string openID)
+        {
+            User user = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.SELECT_USER_BY_OPENID, openID);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                user = new User
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString(),
+                    userId = dt.Rows[0]["USER_ID"].ToString(),
+                    openid = dt.Rows[0]["OPENID"].ToString(),
+                    userImg = dt.Rows[0]["USER_IMG"].ToString(),
+                };
+            }
+
+            return user;
+        }
     }
 
     public class UsersSqls
@@ -93,6 +115,10 @@ namespace ACBC.Dao
             + "UPDATE T_BUSS_SHOP_CODE "
             + "SET STATE = STATE - 1 "
             + "WHERE CODE = '{0}'";
+        public const string SELECT_USER_BY_OPENID = ""
+            + "SELECT * "
+            + "FROM T_BASE_USER "
+            + "WHERE OPENID = '{0}'";
     }
 
     public class ShopUser
@@ -101,5 +127,4 @@ namespace ACBC.Dao
         public string shopUserImg;
     }
 
-    
 }

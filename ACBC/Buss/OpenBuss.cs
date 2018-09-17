@@ -51,6 +51,46 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.SenparcCode, jsonResult.errmsg);
             }
         }
+
+        public object Do_UserLogin(BaseApi baseApi)
+        {
+            LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(baseApi.param.ToString());
+            if (loginParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            var jsonResult = SnsApi.JsCode2Json(Global.APPID, Global.APPSECRET, loginParam.code);
+            if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
+            {
+                AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
+                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
+
+                UsersDao usersDao = new UsersDao();
+                var user = usersDao.GetUser(jsonResult.openid);
+                if (user != null)
+                {
+                    sessionBag.Name = sessionBag.OpenId;
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    return new {
+                        token = sessionBag.Key,
+                        isReg = true,
+                        userId = user.userId,
+                        userName = user.userName,
+                        userImg = user.userImg,
+                    };
+                }
+                else
+                {
+                    return new { token = sessionBag.Key, isReg = false };
+                }
+
+            }
+            else
+            {
+                throw new ApiException(CodeMessage.SenparcCode, jsonResult.errmsg);
+            }
+        }
     }
 
     public class LoginParam

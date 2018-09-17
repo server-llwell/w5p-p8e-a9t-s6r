@@ -225,6 +225,8 @@ namespace ACBC.Dao
     {
         public string userName;
         public string userId;
+        public string openid;
+        public string userImg;
     }
 
     public class ShopRecord
