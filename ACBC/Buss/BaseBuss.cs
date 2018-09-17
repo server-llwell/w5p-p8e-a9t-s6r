@@ -101,6 +101,13 @@ namespace ACBC.Buss
                 {
                     msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                 }
+                else
+                {
+                    if (sessionBag.Name == null)
+                    {
+                        msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                    }
+                }
             }
             else
             {

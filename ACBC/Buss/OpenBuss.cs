@@ -31,10 +31,13 @@ namespace ACBC.Buss
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
+                
                 UsersDao usersDao = new UsersDao();
                 var shopUser = usersDao.GetShopUser(jsonResult.openid);
                 if(shopUser != null)
                 {
+                    sessionBag.Name = sessionBag.OpenId;
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new { token = sessionBag.Key, isReg = true, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
                 }
                 else

@@ -1,6 +1,7 @@
 ﻿using ACBC.Common;
 using ACBC.Dao;
 using Newtonsoft.Json;
+using Senparc.Weixin.WxOpen.Containers;
 using Senparc.Weixin.WxOpen.Entities;
 using Senparc.Weixin.WxOpen.Helpers;
 
@@ -92,6 +93,9 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
             }
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            sessionBag.Name = sessionBag.OpenId;
+            SessionContainer.Update(sessionBag.Key, sessionBag);
             return "";
         }
     }
