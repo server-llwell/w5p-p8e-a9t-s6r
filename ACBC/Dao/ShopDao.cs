@@ -67,6 +67,9 @@ namespace ACBC.Dao
                 {
                     shopRate = (double)dt.Rows[0]["SHOP_RATE"],
                     userRate = (double)dt.Rows[0]["USER_RATE"],
+                    shopAgentRate = (double)dt.Rows[0]["SHOP_AGENT_RATE"],
+                    userAgentRate = (double)dt.Rows[0]["USER_AGENT_RATE"],
+                    platformRate = (double)dt.Rows[0]["PLATFORM_RATE"],
                 };
             }
 
@@ -80,7 +83,16 @@ namespace ACBC.Dao
             double shopMoney, 
             double absShopMoney, 
             double userMoney, 
-            double absUserMoney)
+            double absUserMoney,
+            double shopAgentRate,
+            double userAgentRate,
+            double shopAgentMoney,
+            double userAgentMoney,
+            double absShopAgentMoney,
+            double absUserAgentMoney,
+            double platformRate,
+            double platformMoney,
+            double absPlatformMoney)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(ShopSqls.INSERT_RECORD,
@@ -96,14 +108,24 @@ namespace ACBC.Dao
                 submitParam.ticketImg,
                 submitParam.inputState,
                 0,
-                submitParam.shopId);
+                submitParam.shopId,
+                shopAgentRate,
+                userAgentRate,
+                shopAgentMoney,
+                userAgentMoney,
+                absShopAgentMoney,
+                absUserAgentMoney,
+                platformRate,
+                platformMoney,
+                absPlatformMoney
+                );
             string sqlInsert = builder.ToString();
             return DatabaseOperationWeb.ExecuteDML(sqlInsert);
         }
 
-        public List<Record> GetRecordByShopIdAndPayState(string shopId, string payState)
+        public List<ShopRecord> GetRecordByShopIdAndPayState(string shopId, string payState)
         {
-            List<Record> list = new List<Record>();
+            List<ShopRecord> list = new List<ShopRecord>();
 
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(ShopSqls.SELECT_SHOP_RECORD_BY_SHOP_ID_AND_PAY_STATE, shopId, payState);
@@ -113,7 +135,7 @@ namespace ACBC.Dao
             {
                 foreach(DataRow dr in dt.Rows)
                 {
-                    Record record = new Record
+                    ShopRecord shopRecord = new ShopRecord
                     {
                         recordId = dr["RECORD_ID"].ToString(),
                         recordTime = dr["RECORD_TIME"].ToString(),
@@ -126,7 +148,7 @@ namespace ACBC.Dao
                         payState = dr["PAY_STATE"].ToString(),
                         inputState = dr["INPUT_STATE"].ToString()
                     };
-                    list.Add(record);
+                    list.Add(shopRecord);
                 }
             }
             return list;
@@ -154,8 +176,30 @@ namespace ACBC.Dao
             + "WHERE SCAN_CODE = '{0}'";
         public const string INSERT_RECORD = ""
             + "INSERT INTO T_BUSS_RECORD"
-            + "(RECORD_TIME,USER_ID,TOTAL,SHOP_RATE,USER_RATE,SHOP_MONEY,ABS_SHOP_MONEY,USER_MONEY,ABS_USER_MONEY,RECORD_CODE,RECORD_CODE_IMG,INPUT_STATE,PAY_STATE,SHOP_ID) "
-            + "VALUES(NOW(),{0},{1},{2},{3},{4},{5},{6},{7},'{8}','{9}',{10},{11},{12})";
+            + "(RECORD_TIME,"
+            + "USER_ID,"
+            + "TOTAL,"
+            + "SHOP_RATE,"
+            + "USER_RATE,"
+            + "SHOP_MONEY,"
+            + "ABS_SHOP_MONEY,"
+            + "USER_MONEY,"
+            + "ABS_USER_MONEY,"
+            + "RECORD_CODE,"
+            + "RECORD_CODE_IMG,"
+            + "INPUT_STATE,"
+            + "PAY_STATE,"
+            + "SHOP_ID,"
+            + "SHOP_AGENT_RATE,"
+            + "USER_AGENT_RATE,"
+            + "SHOP_AGENT_MONEY,"
+            + "USER_AGENT_MONEY,"
+            + "ABS_SHOP_AGENT_MONEY,"
+            + "ABS_USER_AGENT_MONEY,"
+            + "PLATFORM_RATE,"
+            + "PLATFORM_MONEY,"
+            + "ABS_PLATFORM_MONEY) "
+            + "VALUES(NOW(),{0},{1},{2},{3},{4},{5},{6},{7},'{8}','{9}',{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21})";
         public const string SELECT_SHOP_RECORD_BY_SHOP_ID_AND_PAY_STATE = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD A, T_BASE_USER B "
@@ -171,6 +215,9 @@ namespace ACBC.Dao
         public string shopName;
         public double shopRate;
         public double userRate;
+        public double shopAgentRate;
+        public double userAgentRate;
+        public double platformRate;
         public string shopCode;
     }
 
@@ -180,7 +227,7 @@ namespace ACBC.Dao
         public string userId;
     }
 
-    public class Record
+    public class ShopRecord
     {
         public string recordId;
         public string recordTime;

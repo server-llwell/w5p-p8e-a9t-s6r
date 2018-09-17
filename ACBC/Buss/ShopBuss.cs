@@ -70,14 +70,28 @@ namespace ACBC.Buss
             {
                 submitParam.total = -submitParam.total;
             }
+            double shopMoney = Math.Round(submitParam.total * shop.shopRate, 2);
+            double shopAgentMoney = Math.Round(submitParam.total * shop.shopAgentRate, 2);
+            double userAgentMoney = Math.Round(submitParam.total * shop.userAgentRate, 2);
+            double platformMoney = Math.Round(submitParam.total * shop.platformRate, 2);
+            double userMoney = shopMoney - shopAgentMoney - userAgentMoney - platformMoney;
             if (!shopDao.InputRecord(
                 submitParam, 
                 shop.shopRate, 
-                shop.userRate, 
-                Math.Round(submitParam.total * shop.shopRate, 2),
-                Math.Abs(Math.Round(submitParam.total * shop.shopRate, 2)),
-                Math.Round(submitParam.total * shop.userRate, 2),
-                Math.Abs(Math.Round(submitParam.total * shop.userRate, 2))
+                shop.userRate,
+                shopMoney,
+                Math.Abs(shopMoney),
+                userMoney,
+                Math.Abs(userMoney),
+                shop.shopAgentRate,
+                shop.userAgentRate,
+                shopAgentMoney,
+                userAgentMoney,
+                Math.Abs(shopAgentMoney),
+                Math.Abs(userAgentMoney),
+                shop.platformRate,
+                platformMoney,
+                Math.Abs(platformMoney)
                 ))
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
@@ -95,9 +109,9 @@ namespace ACBC.Buss
 
             ShopDao shopDao = new ShopDao();
 
-            List<Record> listUnPay = shopDao.GetRecordByShopIdAndPayState(getRecordParam.shopId, "0");
-            List<Record> listPay = shopDao.GetRecordByShopIdAndPayState(getRecordParam.shopId, "1");
-            List<Record> listAll = new List<Record>();
+            List<ShopRecord> listUnPay = shopDao.GetRecordByShopIdAndPayState(getRecordParam.shopId, "0");
+            List<ShopRecord> listPay = shopDao.GetRecordByShopIdAndPayState(getRecordParam.shopId, "1");
+            List<ShopRecord> listAll = new List<ShopRecord>();
             listAll.AddRange(listUnPay);
             listAll.AddRange(listPay);
 
@@ -113,36 +127,36 @@ namespace ACBC.Buss
             double sumReturnTotalAll = 0;
             double sumShopMoneyAll = 0;
 
-            foreach (Record record in listUnPay)
+            foreach (ShopRecord shopRecord in listUnPay)
             {
-                sumTotalUnPay += record.total;
-                sumShopMoneyUnPay += record.shopMoney;
-                if(record.inputState == "1")
+                sumTotalUnPay += shopRecord.total;
+                sumShopMoneyUnPay += shopRecord.shopMoney;
+                if(shopRecord.inputState == "1")
                 {
-                    sumReturnTotalUnPay += record.total;
+                    sumReturnTotalUnPay += shopRecord.total;
                 }
             }
 
-            foreach (Record record in listPay)
+            foreach (ShopRecord shopRecord in listPay)
             {
-                sumTotalPay += record.total;
-                sumShopMoneyPay += record.shopMoney;
-                if (record.inputState == "1")
+                sumTotalPay += shopRecord.total;
+                sumShopMoneyPay += shopRecord.shopMoney;
+                if (shopRecord.inputState == "1")
                 {
-                    sumReturnTotalPay += record.total;
+                    sumReturnTotalPay += shopRecord.total;
                 }
             }
 
-            foreach (Record record in listAll)
+            foreach (ShopRecord shopRecord in listAll)
             {
-                sumTotalAll += record.total;
-                if (record.payState == "0")
+                sumTotalAll += shopRecord.total;
+                if (shopRecord.payState == "0")
                 {
-                    sumShopMoneyAll += record.shopMoney;
+                    sumShopMoneyAll += shopRecord.shopMoney;
                 }
-                if (record.inputState == "1")
+                if (shopRecord.inputState == "1")
                 {
-                    sumReturnTotalAll += record.total;
+                    sumReturnTotalAll += shopRecord.total;
                 }
             }
 
