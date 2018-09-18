@@ -45,5 +45,7 @@ namespace ACBC.Common
         SmsCodeError = 10301,
         UserExist = 10302,
         InvalidAgentCode = 10303,
+
+        InvalidShopInfo = 10401,
     }
 }

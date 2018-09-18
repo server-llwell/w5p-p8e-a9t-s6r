@@ -92,6 +92,11 @@ namespace ACBC.Buss
         public string shopId;
     }
 
+    public class GetShopInfoParam
+    {
+        public string shopId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -140,6 +145,36 @@ namespace ACBC.Buss
     {
         public string agentId;
         public string agentName;
+    }
+
+    public class ShopShow
+    {
+        public string shopId;
+        public string shopName;
+        public string shopAddr;
+        public string shopPhone;
+        public string shopListImg;
+        public string userRate;
+    }
+
+    public class ShopInfo
+    {
+        public string shopName;
+        public string shopDesc;
+        public string shopInfoImg;
+        public string shopAddr;
+        public string shopPhone;
+        public string userRate;
+        public List<ShopBrands> brandsList;
+    }
+
+    public class ShopBrands
+    {
+        public string shopBrandsId;
+        public string brandsName;
+        public string brandsImg;
+        public string goodsNum;
+        public string recommend;
     }
 
     #endregion

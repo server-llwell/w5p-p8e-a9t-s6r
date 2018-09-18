@@ -10,11 +10,11 @@ namespace ACBC.Common
     /// </summary>
     public enum ApiType
     {
-        OpenApi,
-        UserApi,
-        ShopApi,
-        DemoApi,
-        UploadApi,
+        OpenApi,//完全开放API
+        UsersApi,//条件开放的用户API
+        UserApi,//代购用户API
+        ShopApi,//店铺用户API
+        UploadApi,//上传组件API
     }
 
     public enum CheckType
@@ -68,6 +68,9 @@ namespace ACBC.Common
 
     }
 
+    /// <summary>
+    /// 完全开放
+    /// </summary>
     public class OpenApi : BaseApi
     {
         public override CheckType GetCheckType()
@@ -87,7 +90,10 @@ namespace ACBC.Common
 
     }
 
-    public class UserApi : BaseApi
+    /// <summary>
+    /// 条件开放，所有用户接口
+    /// </summary>
+    public class UsersApi : BaseApi
     {
 
         public override CheckType GetCheckType()
@@ -102,11 +108,14 @@ namespace ACBC.Common
 
         public override ApiType GetApiType()
         {
-            return ApiType.UserApi;
+            return ApiType.UsersApi;
         }
 
     }
 
+    /// <summary>
+    /// 合作店铺接口
+    /// </summary>
     public class ShopApi : BaseApi
     {
 
@@ -123,6 +132,29 @@ namespace ACBC.Common
         public override ApiType GetApiType()
         {
             return ApiType.ShopApi;
+        }
+
+    }
+
+    /// <summary>
+    /// 代购用户接口
+    /// </summary>
+    public class UserApi : BaseApi
+    {
+
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Token;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.UserApi;
         }
 
     }

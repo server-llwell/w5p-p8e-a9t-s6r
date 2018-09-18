@@ -14,6 +14,8 @@ namespace ACBC.Common
         {
             this.code = code;
             this.msg = msg;
+
+            Console.WriteLine(msg);
         }
     }
 }

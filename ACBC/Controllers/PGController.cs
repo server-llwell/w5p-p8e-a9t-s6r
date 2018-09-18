@@ -24,11 +24,11 @@ namespace ACBC.Controllers
         }
 
         [HttpPost]
-        public ActionResult Users([FromBody]UserApi userApi)
+        public ActionResult Users([FromBody]UsersApi usersApi)
         {
-            if (userApi == null)
+            if (usersApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
-            return Json(Global.BUSS.BussResults(this, userApi));
+            return Json(Global.BUSS.BussResults(this, usersApi));
         }
 
         [HttpPost]
@@ -37,6 +37,14 @@ namespace ACBC.Controllers
             if (shopApi == null)
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
             return Json(Global.BUSS.BussResults(this, shopApi));
+        }
+
+        [HttpPost]
+        new public ActionResult User([FromBody]UserApi userApi)
+        {
+            if (userApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, userApi));
         }
 
         [HttpPost]
