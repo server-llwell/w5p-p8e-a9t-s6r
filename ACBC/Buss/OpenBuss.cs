@@ -40,7 +40,7 @@ namespace ACBC.Buss
                     sessionUser.openid = sessionBag.OpenId;
                     sessionUser.userType = "SHOP";
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new { token = sessionBag.Key, isReg = true, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
                 }
                 else
@@ -63,7 +63,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            var jsonResult = SnsApi.JsCode2Json(Global.APPID, Global.APPSECRET, loginParam.code);
+            var jsonResult = SnsApi.JsCode2Json(Global.USERAPPID, Global.USERAPPSECRET, loginParam.code);
             if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);

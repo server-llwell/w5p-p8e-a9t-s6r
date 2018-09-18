@@ -92,6 +92,40 @@ namespace ACBC.Common
             }
         }
 
+        /// <summary>
+        /// 小程序APPID
+        /// </summary>
+        public static string USERAPPID
+        {
+            get
+            {
+#if DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxUserAppId", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxUserAppId");
+#endif
+                return appId;
+            }
+        }
+
+        /// <summary>
+        /// 小程序APPSECRET
+        /// </summary>
+        public static string USERAPPSECRET
+        {
+            get
+            {
+#if DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxUserAppSecret", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxUserAppSecret");
+#endif
+                return appSecret;
+            }
+        }
+
         #region OSS相关
 
         /// <summary>
