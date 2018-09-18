@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,6 +86,30 @@ namespace ACBC.Dao
 
             return shopInfo;
         }
+
+        public string GetUserScanCode(string openId)
+        {
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(openId + new Random().Next()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UserSqls.UPDATE_USER_QRCODE_BY_OPENID, scanCode, openId);
+            string sqlUpdate = builder.ToString();
+
+            if(DatabaseOperationWeb.ExecuteDML(sqlUpdate))
+            {
+                return scanCode;
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 
     public class UserSqls
@@ -102,6 +127,9 @@ namespace ACBC.Dao
             + "FROM T_BASE_SHOP_BRANDS "
             + "WHERE SHOP_ID = {0} "
             + "ORDER BY PAY_SORT";
-
+        public const string UPDATE_USER_QRCODE_BY_OPENID = ""
+            + "UPDATE T_BASE_USER "
+            + "SET SCAN_CODE = '{0}' "
+            + "WHERE OPENID = '{1}'";
     }
 }

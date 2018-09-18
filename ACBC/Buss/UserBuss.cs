@@ -38,5 +38,13 @@ namespace ACBC.Buss
             }
             return shopInfo;
         }
+
+        public object Do_GetScanCode(BaseApi baseApi)
+        {
+            UserDao userDao = new UserDao();
+            string scanCode = userDao.GetUserScanCode(Utils.GetOpenID(baseApi.token));
+            return scanCode;
+        }
+
     }
 }

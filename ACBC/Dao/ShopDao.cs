@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -131,7 +132,11 @@ namespace ACBC.Dao
                 scanCode = strResult.Replace("-", "");
             }
             builder.AppendFormat(ShopSqls.UPDATE_USER_QRCODE, scanCode, submitParam.userId);
-            return DatabaseOperationWeb.ExecuteDML(sqlInsert);
+            string sqlUpdate = builder.ToString();
+            ArrayList list = new ArrayList();
+            list.Add(sqlInsert);
+            list.Add(sqlUpdate);
+            return DatabaseOperationWeb.ExecuteDML(list);
         }
 
         public List<ShopRecord> GetRecordByShopIdAndPayState(string shopId, string payState)
