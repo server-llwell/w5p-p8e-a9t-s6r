@@ -10,6 +10,7 @@ namespace ACBC.Buss
     public class SessionUser
     {
         public string openid;
+        public string checkPhone;
         public string checkCode;
         public string userType;
     }
@@ -52,6 +53,7 @@ namespace ACBC.Buss
         public string language;
         public string nickName;
         public string province;
+        public string phone;
     }
 
     public class CheckSignatureParam
@@ -119,6 +121,7 @@ namespace ACBC.Buss
         public string userId;
         public string openid;
         public string userImg;
+        public string phone;
     }
 
     public class ShopRecord

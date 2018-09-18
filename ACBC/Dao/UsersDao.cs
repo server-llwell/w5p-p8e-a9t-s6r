@@ -79,7 +79,7 @@ namespace ACBC.Dao
             builder.AppendFormat(UsersSqls.SELECT_USER_BY_OPENID, openID);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null && dt.Rows.Count == 1)
+            if (dt != null && dt.Rows.Count > 0)
             {
                 user = new User
                 {
@@ -87,6 +87,30 @@ namespace ACBC.Dao
                     userId = dt.Rows[0]["USER_ID"].ToString(),
                     openid = dt.Rows[0]["OPENID"].ToString(),
                     userImg = dt.Rows[0]["USER_IMG"].ToString(),
+                    phone = dt.Rows[0]["USER_PHONE"].ToString(),
+                };
+            }
+
+            return user;
+        }
+
+        public User GetUserByPhone(string phone)
+        {
+            User user = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.SELECT_USER_BY_PHONE, phone);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                user = new User
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString(),
+                    userId = dt.Rows[0]["USER_ID"].ToString(),
+                    openid = dt.Rows[0]["OPENID"].ToString(),
+                    userImg = dt.Rows[0]["USER_IMG"].ToString(),
+                    phone = dt.Rows[0]["USER_PHONE"].ToString(),
                 };
             }
 
@@ -129,7 +153,8 @@ namespace ACBC.Dao
                 userRegParam.nickName,
                 userRegParam.avatarUrl,
                 scanCode,
-                agentId);
+                agentId,
+                userRegParam.phone);
             string sqlInsert = builder.ToString();
             builder = new StringBuilder();
             builder.AppendFormat(UsersSqls.UPDATE_USER_REG_AGENT_CODE,
@@ -167,6 +192,10 @@ namespace ACBC.Dao
             + "SELECT * "
             + "FROM T_BASE_USER "
             + "WHERE OPENID = '{0}'";
+        public const string SELECT_USER_BY_PHONE = ""
+            + "SELECT * "
+            + "FROM T_BASE_USER "
+            + "WHERE USER_PHONE = '{0}'";
         public const string SELECT_AGENT_BY_CODE = ""
             + "SELECT * "
             + "FROM T_BASE_AGENT A, T_BUSS_AGENT_CODE B "
@@ -176,8 +205,8 @@ namespace ACBC.Dao
             + "AND AGENT_STATE > 0";
         public const string INSERT_USER_REG = ""
             + "INSERT INTO T_BASE_USER"
-            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT) "
-            + "VALUES('{0}','{1}','{2}','{3}',{4})";
+            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE) "
+            + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}')";
         public const string UPDATE_USER_REG_AGENT_CODE = ""
             + "UPDATE T_BUSS_AGENT_CODE "
             + "SET AGENT_STATE = AGENT_STATE - 1 "

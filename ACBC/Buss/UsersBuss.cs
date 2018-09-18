@@ -121,6 +121,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
             }
             sessionUser.checkCode = code;
+            sessionUser.checkPhone = checkCodeParam.phone;
             sessionUser.userType = "USER";
             SessionContainer.Update(sessionBag.Key, sessionBag);
             StringBuilder builder = new StringBuilder();
@@ -151,7 +152,10 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
             }
             SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
-            if (sessionUser == null || sessionUser.checkCode == null || sessionUser.checkCode != userRegParam.checkCode)
+            if (sessionUser == null || 
+                sessionUser.checkCode == null || 
+                sessionUser.checkCode != userRegParam.checkCode || 
+                sessionUser.checkPhone != userRegParam.phone)
             {
                 throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
             }
@@ -162,6 +166,11 @@ namespace ACBC.Buss
             if (user != null)
             {
                 throw new ApiException(CodeMessage.UserExist, "UserExist");
+            }
+            user = usersDao.GetUserByPhone(userRegParam.phone);
+            if (user != null)
+            {
+                throw new ApiException(CodeMessage.PhoneExist, "PhoneExist");
             }
             var agent = usersDao.GetAgent(userRegParam.agentCode, "1");
             if (agent == null)
