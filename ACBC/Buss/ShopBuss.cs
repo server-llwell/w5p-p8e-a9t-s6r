@@ -91,7 +91,8 @@ namespace ACBC.Buss
                 Math.Abs(userAgentMoney),
                 shop.platformRate,
                 platformMoney,
-                Math.Abs(platformMoney)
+                Math.Abs(platformMoney),
+                Utils.GetOpenID(baseApi.token)
                 ))
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -92,7 +93,8 @@ namespace ACBC.Dao
             double absUserAgentMoney,
             double platformRate,
             double platformMoney,
-            double absPlatformMoney)
+            double absPlatformMoney,
+            string openID)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(ShopSqls.INSERT_RECORD,
@@ -120,6 +122,15 @@ namespace ACBC.Dao
                 absPlatformMoney
                 );
             string sqlInsert = builder.ToString();
+            builder.Clear();
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(openID + new Random().Next()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+            builder.AppendFormat(ShopSqls.UPDATE_USER_QRCODE, scanCode, submitParam.userId);
             return DatabaseOperationWeb.ExecuteDML(sqlInsert);
         }
 
@@ -207,6 +218,10 @@ namespace ACBC.Dao
             + "AND SHOP_ID = '{0}' "
             + "AND PAY_STATE = {1} "
             + "ORDER BY RECORD_TIME DESC";
+        public const string UPDATE_USER_QRCODE = ""
+            + "UPDATE T_BASE_USER "
+            + "SET SCAN_CODE = '{0}' "
+            + "WHERE USER_ID = {1} ";
     }
 
 
