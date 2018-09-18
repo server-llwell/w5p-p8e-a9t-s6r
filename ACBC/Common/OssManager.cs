@@ -38,7 +38,7 @@ namespace ACBC.Common
                 }
                 
             }
-            catch (Exception e)
+            catch
             {
                 
             }

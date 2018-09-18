@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,8 +32,6 @@ namespace ACBC.Dao
 
             return shopUser;
         }
-
-        
 
         public Shop GetShopByCode(string shopCode)
         {
@@ -93,6 +92,55 @@ namespace ACBC.Dao
 
             return user;
         }
+
+        public Agent GetAgent(string code, string agentType)
+        {
+            Agent agent = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.SELECT_AGENT_BY_CODE, code, agentType);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                agent = new Agent
+                {
+                    agentId = dt.Rows[0]["AGENT_ID"].ToString(),
+                    agentName = dt.Rows[0]["AGENT_NAME"].ToString(),
+                };
+            }
+
+            return agent;
+        }
+
+        public bool UserReg(UserRegParam userRegParam, string openID, string agentId)
+        {
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(openID));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+            
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.INSERT_USER_REG,
+                openID,
+                userRegParam.nickName,
+                userRegParam.avatarUrl,
+                scanCode,
+                agentId);
+            string sqlInsert = builder.ToString();
+            builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.UPDATE_USER_REG_AGENT_CODE,
+                userRegParam.agentCode);
+            string sqlUpdate = builder.ToString();
+            ArrayList list = new ArrayList();
+            list.Add(sqlInsert);
+            list.Add(sqlUpdate);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
     }
 
     public class UsersSqls
@@ -119,12 +167,22 @@ namespace ACBC.Dao
             + "SELECT * "
             + "FROM T_BASE_USER "
             + "WHERE OPENID = '{0}'";
+        public const string SELECT_AGENT_BY_CODE = ""
+            + "SELECT * "
+            + "FROM T_BASE_AGENT A, T_BUSS_AGENT_CODE B "
+            + "WHERE B.AGENT_ID = A.AGENT_ID "
+            + "AND AGENT_CODE = '{0}' "
+            + "AND AGENT_TYPE = {1} "
+            + "AND AGENT_STATE > 0";
+        public const string INSERT_USER_REG = ""
+            + "INSERT INTO T_BASE_USER"
+            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT) "
+            + "VALUES('{0}','{1}','{2}','{3}',{4})";
+        public const string UPDATE_USER_REG_AGENT_CODE = ""
+            + "UPDATE T_BUSS_AGENT_CODE "
+            + "SET AGENT_STATE = AGENT_STATE - 1 "
+            + "WHERE AGENT_CODE = '{0}'";
     }
 
-    public class ShopUser
-    {
-        public string shopUserName;
-        public string shopUserImg;
-    }
 
 }

@@ -36,8 +36,11 @@ namespace ACBC.Buss
                 var shopUser = usersDao.GetShopUser(jsonResult.openid);
                 if(shopUser != null)
                 {
-                    sessionBag.Name = sessionBag.OpenId;
-                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    SessionUser sessionUser = new SessionUser();
+                    sessionUser.openid = sessionBag.OpenId;
+                    sessionUser.userType = "SHOP";
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+
                     return new { token = sessionBag.Key, isReg = true, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
                 }
                 else
@@ -65,12 +68,17 @@ namespace ACBC.Buss
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
-
+                sessionBag.ExpireTime = DateTime.Now.AddSeconds(7200);
+                SessionContainer.Update(sessionBag.Key, sessionBag);
                 UsersDao usersDao = new UsersDao();
                 var user = usersDao.GetUser(jsonResult.openid);
+                SessionUser sessionUser = new SessionUser();
                 if (user != null)
                 {
-                    sessionBag.Name = sessionBag.OpenId;
+                    sessionUser.openid = sessionBag.OpenId;
+                    sessionUser.userType = "USER";
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+
                     SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new {
                         token = sessionBag.Key,
@@ -82,6 +90,7 @@ namespace ACBC.Buss
                 }
                 else
                 {
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
                     return new { token = sessionBag.Key, isReg = false };
                 }
 
@@ -93,8 +102,5 @@ namespace ACBC.Buss
         }
     }
 
-    public class LoginParam
-    {
-        public string code;
-    }
+    
 }

@@ -15,6 +15,8 @@ namespace ACBC.Common
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY = 7200;
 
+        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
+
         /// <summary>
         /// 基础业务处理类对象
         /// </summary>
@@ -41,21 +43,7 @@ namespace ACBC.Common
             }
         }
 
-        /// <summary>
-        /// 获取系统已登录用户OPENID
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public static string GetOpenID(string token)
-        {
-            SessionBag sessionBag = SessionContainer.GetSession(token);
-            if (sessionBag == null)
-            {
-                return null;
-            }
-            return sessionBag.OpenId;
-        }
-
+        
         public static string REDIS
         {
             get

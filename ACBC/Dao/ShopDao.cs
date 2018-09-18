@@ -209,37 +209,5 @@ namespace ACBC.Dao
             + "ORDER BY RECORD_TIME DESC";
     }
 
-    public class Shop
-    {
-        public string shopId;
-        public string shopName;
-        public double shopRate;
-        public double userRate;
-        public double shopAgentRate;
-        public double userAgentRate;
-        public double platformRate;
-        public string shopCode;
-    }
 
-    public class User
-    {
-        public string userName;
-        public string userId;
-        public string openid;
-        public string userImg;
-    }
-
-    public class ShopRecord
-    {
-        public string recordId;
-        public string recordTime;
-        public double total;
-        public string userName;
-        public string shopRate;
-        public double shopMoney;
-        public string recordCode;
-        public string recordCodeImg;
-        public string payState;
-        public string inputState;
-    }
 }

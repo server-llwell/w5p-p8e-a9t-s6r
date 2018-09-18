@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using Senparc.Weixin.WxOpen.Containers;
 using Senparc.Weixin.WxOpen.Entities;
 using Senparc.Weixin.WxOpen.Helpers;
+using System;
+using System.Text;
 
 namespace ACBC.Buss
 {
@@ -78,7 +80,7 @@ namespace ACBC.Buss
             }
 
             UsersDao usersDao = new UsersDao();
-            string openID = Global.GetOpenID(baseApi.token);
+            string openID = Utils.GetOpenID(baseApi.token);
             var shopUser = usersDao.GetShopUser(openID);
             if(shopUser != null)
             {
@@ -94,34 +96,90 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
             }
             SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
-            sessionBag.Name = sessionBag.OpenId;
+            SessionUser sessionUser = new SessionUser();
+            sessionUser.openid = sessionBag.OpenId;
+            sessionUser.userType = "SHOP";
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+
+            SessionContainer.Update(sessionBag.Key, sessionBag);
+            return "";
+        }
+
+        public object Do_CheckCode(BaseApi baseApi)
+        {
+            CheckCodeParam checkCodeParam = JsonConvert.DeserializeObject<CheckCodeParam>(baseApi.param.ToString());
+            if (checkCodeParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            
+            string code = new Random().Next(999999).ToString().PadLeft(6, '0');
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            if (sessionUser == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            sessionUser.checkCode = code;
+            sessionUser.userType = "USER";
+            SessionContainer.Update(sessionBag.Key, sessionBag);
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(Global.SMS_CODE_URL, checkCodeParam.phone, code);
+            string url = builder.ToString();
+            string res = Utils.GetHttp(url);
+
+            SmsCodeRes smsCodeRes = JsonConvert.DeserializeObject<SmsCodeRes>(res);
+            if (smsCodeRes == null || smsCodeRes.error_code != 0)
+            {
+                throw new ApiException(CodeMessage.SmsCodeError, (smsCodeRes == null ? "SmsCodeError" : smsCodeRes.reason));
+            }
+
+            return "";
+        }
+
+        public object Do_UserReg(BaseApi baseApi)
+        {
+            UserRegParam userRegParam = JsonConvert.DeserializeObject<UserRegParam>(baseApi.param.ToString());
+            if (userRegParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            if (sessionBag == null || sessionBag.Name == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            if (sessionUser == null || sessionUser.checkCode == null || sessionUser.checkCode != userRegParam.checkCode)
+            {
+                throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
+            }
+
+            UsersDao usersDao = new UsersDao();
+            string openID = Utils.GetOpenID(baseApi.token);
+            var user = usersDao.GetUser(openID);
+            if (user != null)
+            {
+                throw new ApiException(CodeMessage.UserExist, "UserExist");
+            }
+            var agent = usersDao.GetAgent(userRegParam.agentCode, "1");
+            if (agent == null)
+            {
+                throw new ApiException(CodeMessage.InvalidAgentCode, "InvalidAgentCode");
+            }
+            if (!usersDao.UserReg(userRegParam, openID, agent.agentId))
+            {
+                throw new ApiException(CodeMessage.BindShopError, "BindShopError");
+            }
+            sessionUser.openid = sessionBag.OpenId;
+            sessionUser.userType = "USER";
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+
             SessionContainer.Update(sessionBag.Key, sessionBag);
             return "";
         }
     }
 
-    public class BindShopParam
-    {
-        public string shopCode;
-        public string avatarUrl;
-        public string city;
-        public string country;
-        public string gender;
-        public string language;
-        public string nickName;
-        public string province;
-    }
 
-    public class CheckSignatureParam
-    {
-        public string rawData;
-        public string signature;
-    }
-
-    public class DecodeEncryptedDataParam
-    {
-        public string type;
-        public string encryptedData;
-        public string iv;
-    }
 }

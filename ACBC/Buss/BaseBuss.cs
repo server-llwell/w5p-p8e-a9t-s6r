@@ -107,6 +107,14 @@ namespace ACBC.Buss
                     {
                         msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
                     }
+                    else
+                    {
+                        SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+                        if(sessionUser == null || sessionUser.openid != sessionBag.OpenId)
+                        {
+                            msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                        }
+                    }
                 }
             }
             else

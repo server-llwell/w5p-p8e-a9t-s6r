@@ -41,5 +41,9 @@ namespace ACBC.Common
 
         InvalidScanCode = 10201,
         UploadOSSError = 10202,
+
+        SmsCodeError = 10301,
+        UserExist = 10302,
+        InvalidAgentCode = 10303,
     }
 }

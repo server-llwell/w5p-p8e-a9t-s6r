@@ -35,7 +35,7 @@ namespace ACBC.Buss
         public object Do_GetShop(BaseApi baseApi)
         {
             ShopDao shopDao = new ShopDao();
-            Shop shop = shopDao.GetShopByOpenID(Global.GetOpenID(baseApi.token), baseApi.lang);
+            Shop shop = shopDao.GetShopByOpenID(Utils.GetOpenID(baseApi.token), baseApi.lang);
 
             if (shop == null)
             {
@@ -180,24 +180,5 @@ namespace ACBC.Buss
         }
     }
 
-    public class ScanCodeParam
-    {
-        public string code;
-    }
-
-    public class SubmitParam
-    {
-        public string userId;
-        public string shopId;
-        public double total;
-        public string ticketCode;
-        public string ticketImg;
-        public int inputState;
-    }
-
-    public class GetRecordParam
-    {
-        public string shopId;
-    }
 
 }
