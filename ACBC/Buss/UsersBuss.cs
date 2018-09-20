@@ -173,12 +173,15 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.PhoneExist, "PhoneExist");
             }
+            string agentStr = "0";
             var agent = usersDao.GetAgent(userRegParam.agentCode);
             if (agent == null)
             {
                 throw new ApiException(CodeMessage.InvalidAgentCode, "InvalidAgentCode");
             }
-            if (!usersDao.UserReg(userRegParam, openID, agent.userId))
+            agentStr = agent.userId;
+
+            if (!usersDao.UserReg(userRegParam, openID, agentStr))
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
             }

@@ -27,7 +27,7 @@ namespace ACBC.Dao
                      + ";Port=" + port
                      + ";Database=pg;Uid=" + uid
                      + ";Pwd=" + passd
-                     + ";CharSet=utf8;SslMode=none;";
+                     + ";CharSet=utf8mb4; SslMode =none;";
             Console.Write(this.str);
             this.dbt = DBType.Mysql;
         }
