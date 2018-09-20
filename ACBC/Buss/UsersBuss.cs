@@ -123,6 +123,7 @@ namespace ACBC.Buss
             sessionUser.checkCode = code;
             sessionUser.checkPhone = checkCodeParam.phone;
             sessionUser.userType = "USER";
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(Global.SMS_CODE_URL, checkCodeParam.phone, code);

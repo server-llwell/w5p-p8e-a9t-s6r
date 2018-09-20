@@ -73,10 +73,11 @@ namespace ACBC.Buss
                 UsersDao usersDao = new UsersDao();
                 var user = usersDao.GetUser(jsonResult.openid);
                 SessionUser sessionUser = new SessionUser();
+                sessionUser.userType = "USER";
                 if (user != null)
                 {
                     sessionUser.openid = sessionBag.OpenId;
-                    sessionUser.userType = "USER";
+                    
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
 
                     SessionContainer.Update(sessionBag.Key, sessionBag);
@@ -91,6 +92,7 @@ namespace ACBC.Buss
                 else
                 {
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new { token = sessionBag.Key, isReg = false };
                 }
 
