@@ -54,6 +54,7 @@ namespace ACBC.Buss
         public string nickName;
         public string province;
         public string phone;
+        public string userType;
     }
 
     public class CheckSignatureParam
@@ -122,6 +123,7 @@ namespace ACBC.Buss
         public string openid;
         public string userImg;
         public string phone;
+        public string userType;
     }
 
     public class ShopRecord
@@ -142,12 +144,6 @@ namespace ACBC.Buss
     {
         public string shopUserName;
         public string shopUserImg;
-    }
-
-    public class Agent
-    {
-        public string agentId;
-        public string agentName;
     }
 
     public class ShopShow
@@ -180,5 +176,47 @@ namespace ACBC.Buss
         public string recommend;
     }
 
-    #endregion
+    public class RecordStateSum
+    {
+        public int process;
+        public int pay;
+        public int paid;
+
+        public double payMoney;
+    }
+
+    public class RecordStateList
+    {
+        public int process;
+        public int pay;
+        public int paid;
+
+        public double processMoney;
+        public double payMoney;
+        public double paidMoney;
+
+        public double processTotal;
+        public double payTotal;
+        public double paidTotal;
+
+        public List<RecordState> processList = new List<RecordState>();
+        public List<RecordState> payList = new List<RecordState>();
+        public List<RecordState> paidList = new List<RecordState>();
+    }
+
+    public class RecordState
+    {
+        public string recordId;
+        public string recordTime;
+        public double total;
+        public string rate;
+        public double money;
+        public string payType;
+        public string applyTime;
+        public string payTime;
+        public string payAddr;
+        public string payState;
+    }
+
+        #endregion
 }

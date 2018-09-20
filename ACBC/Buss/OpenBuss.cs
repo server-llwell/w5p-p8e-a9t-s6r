@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
+using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,14 @@ namespace ACBC.Buss
 
         public object Do_Login(BaseApi baseApi)
         {
+            //var redisManger = new RedisManagerPool(Global.REDIS);      //Redis的连接字符串
+
+            //var redis = redisManger.GetClient();
+            //var redisTodos = redis.As<long>();
+            //long ssss = redisTodos.GetNextSequence();
+            //redisTodos.Store(ssss, new TimeSpan(10));
+            //long s = redisTodos.GetById(1);
+
             LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(baseApi.param.ToString());
             if (loginParam == null)
             {
@@ -73,9 +82,21 @@ namespace ACBC.Buss
                 UsersDao usersDao = new UsersDao();
                 var user = usersDao.GetUser(jsonResult.openid);
                 SessionUser sessionUser = new SessionUser();
-                sessionUser.userType = "USER";
                 if (user != null)
                 {
+                    switch (user.userType)
+                    {
+                        case "0":
+                            sessionUser.userType = "USER";
+                            break;
+                        case "1":
+                            sessionUser.userType = "AGENT";
+                            break;
+                        default:
+                            sessionUser.userType = "USER";
+                            break;
+                    }
+
                     sessionUser.openid = sessionBag.OpenId;
                     
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
@@ -87,6 +108,7 @@ namespace ACBC.Buss
                         userId = user.userId,
                         userName = user.userName,
                         userImg = user.userImg,
+                        userType = user.userType,
                     };
                 }
                 else

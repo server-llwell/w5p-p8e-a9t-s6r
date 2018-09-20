@@ -185,7 +185,8 @@ namespace ACBC.Dao
         public const string SELECT_USER_BY_CODE = ""
             + "SELECT * "
             + "FROM T_BASE_USER "
-            + "WHERE SCAN_CODE = '{0}'";
+            + "WHERE USER_TYPE = 0 "
+            + "AND SCAN_CODE = '{0}'";
         public const string SELECT_SHOP_RATE_BY_USER_ID = ""
             + "SELECT * "
             + "FROM T_BASE_SHOP_USER "

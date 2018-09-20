@@ -48,5 +48,6 @@ namespace ACBC.Common
         PhoneExist = 10304,
 
         InvalidShopInfo = 10401,
+        UserNotExist = 10402,
     }
 }

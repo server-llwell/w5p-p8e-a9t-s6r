@@ -22,6 +22,7 @@
     <PackageReference Include="Senparc.Weixin.Cache.Redis" Version="1.6.1" />
     <PackageReference Include="Senparc.Weixin.Cache.Redis.RedLock" Version="1.1.0" />
     <PackageReference Include="Senparc.Weixin.WxOpen" Version="1.9.1" />
+    <PackageReference Include="ServiceStack.Redis.Core" Version="5.4.0" />
   </ItemGroup>
 
 

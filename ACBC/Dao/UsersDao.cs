@@ -94,6 +94,8 @@ namespace ACBC.Dao
             return user;
         }
 
+
+
         public User GetUserByPhone(string phone)
         {
             User user = null;
@@ -117,24 +119,24 @@ namespace ACBC.Dao
             return user;
         }
 
-        public Agent GetAgent(string code, string agentType)
+        public User GetAgent(string code)
         {
-            Agent agent = null;
+            User user = null;
 
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(UsersSqls.SELECT_AGENT_BY_CODE, code, agentType);
+            builder.AppendFormat(UsersSqls.SELECT_AGENT_BY_CODE, code);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
-                agent = new Agent
+                user = new User
                 {
-                    agentId = dt.Rows[0]["AGENT_ID"].ToString(),
-                    agentName = dt.Rows[0]["AGENT_NAME"].ToString(),
+                   userId = dt.Rows[0]["USER_ID"].ToString(),
+                   userName = dt.Rows[0]["USER_NAME"].ToString(),
                 };
             }
 
-            return agent;
+            return user;
         }
 
         public bool UserReg(UserRegParam userRegParam, string openID, string agentId)
@@ -154,7 +156,8 @@ namespace ACBC.Dao
                 userRegParam.avatarUrl,
                 scanCode,
                 agentId,
-                userRegParam.phone);
+                userRegParam.phone,
+                userRegParam.userType);
             string sqlInsert = builder.ToString();
             builder = new StringBuilder();
             builder.AppendFormat(UsersSqls.UPDATE_USER_REG_AGENT_CODE,
@@ -198,15 +201,14 @@ namespace ACBC.Dao
             + "WHERE USER_PHONE = '{0}'";
         public const string SELECT_AGENT_BY_CODE = ""
             + "SELECT * "
-            + "FROM T_BASE_AGENT A, T_BUSS_AGENT_CODE B "
-            + "WHERE B.AGENT_ID = A.AGENT_ID "
+            + "FROM T_BASE_USER A, T_BUSS_AGENT_CODE B "
+            + "WHERE B.AGENT_ID = A.USER_ID "
             + "AND AGENT_CODE = '{0}' "
-            + "AND AGENT_TYPE = {1} "
             + "AND AGENT_STATE > 0";
         public const string INSERT_USER_REG = ""
             + "INSERT INTO T_BASE_USER"
-            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE) "
-            + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}')";
+            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE,USER_TYPE) "
+            + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}',{6})";
         public const string UPDATE_USER_REG_AGENT_CODE = ""
             + "UPDATE T_BUSS_AGENT_CODE "
             + "SET AGENT_STATE = AGENT_STATE - 1 "

@@ -173,17 +173,28 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.PhoneExist, "PhoneExist");
             }
-            var agent = usersDao.GetAgent(userRegParam.agentCode, "1");
+            var agent = usersDao.GetAgent(userRegParam.agentCode);
             if (agent == null)
             {
                 throw new ApiException(CodeMessage.InvalidAgentCode, "InvalidAgentCode");
             }
-            if (!usersDao.UserReg(userRegParam, openID, agent.agentId))
+            if (!usersDao.UserReg(userRegParam, openID, agent.userId))
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
             }
             sessionUser.openid = sessionBag.OpenId;
-            sessionUser.userType = "USER";
+            switch(userRegParam.userType)
+            {
+                case "0":
+                    sessionUser.userType = "USER";
+                    break;
+                case "1":
+                    sessionUser.userType = "AGENT";
+                    break;
+                default:
+                    sessionUser.userType = "USER";
+                    break;
+            }
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
 
             SessionContainer.Update(sessionBag.Key, sessionBag);

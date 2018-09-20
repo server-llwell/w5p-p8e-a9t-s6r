@@ -46,5 +46,34 @@ namespace ACBC.Buss
             return scanCode;
         }
 
+        public object Do_GetMainInfo(BaseApi baseApi)
+        {
+            UserDao userDao = new UserDao();
+            string openId = Utils.GetOpenID(baseApi.token);
+            var user = userDao.GetUserByOpenID(openId);
+            if (user == null)
+            {
+                throw new ApiException(CodeMessage.UserNotExist, "UserNotExist");
+            }
+
+            RecordStateSum recordStateSum = userDao.GetStateSum(user.userId, user.userType);
+            
+            return recordStateSum;
+        }
+
+        public object Do_GetMainList(BaseApi baseApi)
+        {
+            UserDao userDao = new UserDao();
+            string openId = Utils.GetOpenID(baseApi.token);
+            var user = userDao.GetUserByOpenID(openId);
+            if (user == null)
+            {
+                throw new ApiException(CodeMessage.UserNotExist, "UserNotExist");
+            }
+
+            RecordStateList recordStateList = userDao.GetStateList(user.userId, user.userType);
+
+            return recordStateList;
+        }
     }
 }
