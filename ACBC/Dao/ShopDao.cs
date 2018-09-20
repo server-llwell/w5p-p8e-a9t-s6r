@@ -27,6 +27,28 @@ namespace ACBC.Dao
                 {
                     userName = dt.Rows[0]["USER_NAME"].ToString(),
                     userId = dt.Rows[0]["USER_ID"].ToString(),
+                    scanCode = dt.Rows[0]["SCAN_CODE"].ToString(),
+                };
+            }
+
+            return user;
+        }
+
+        public User GetUserById(string userId)
+        {
+            User user = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(ShopSqls.SELECT_USER_BY_ID, userId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                user = new User
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString(),
+                    userId = dt.Rows[0]["USER_ID"].ToString(),
+                    scanCode = dt.Rows[0]["SCAN_CODE"].ToString(),
                 };
             }
 
@@ -187,6 +209,11 @@ namespace ACBC.Dao
             + "FROM T_BASE_USER "
             + "WHERE USER_TYPE = 0 "
             + "AND SCAN_CODE = '{0}'";
+        public const string SELECT_USER_BY_ID = ""
+            + "SELECT * "
+            + "FROM T_BASE_USER "
+            + "WHERE USER_TYPE = 0 "
+            + "AND USER_ID = '{0}'";
         public const string SELECT_SHOP_RATE_BY_USER_ID = ""
             + "SELECT * "
             + "FROM T_BASE_SHOP_USER "

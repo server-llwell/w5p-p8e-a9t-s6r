@@ -58,7 +58,11 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.InvalidShopId, "InvalidShopId");
             }
-
+            User user = shopDao.GetUserById(submitParam.userId);
+            if (user == null)
+            {
+                throw new ApiException(CodeMessage.UserNotExist, "UserNotExist");
+            }
             //string fileUrl = OssManager.UploadFileToOSS(submitParam.ticketImg, Global.OssDir, submitParam.ticketImg);
             //if(fileUrl == "")
             //{
@@ -66,7 +70,7 @@ namespace ACBC.Buss
             //}
 
             //submitParam.ticketImg = fileUrl;
-            if(submitParam.inputState == 1)
+            if (submitParam.inputState == 1)
             {
                 submitParam.total = -submitParam.total;
             }
@@ -97,6 +101,13 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.BindShopError, "BindShopError");
             }
+
+            WsPayState wsPayState = new WsPayState
+            {
+                scanCode = user.scanCode,
+                userId = user.userId,
+            };
+            Utils.SetCache(user.scanCode, wsPayState);
             return "";
         }
 

@@ -21,6 +21,12 @@ namespace ACBC.Buss
         public string reason;
     }
 
+    public class WsPayState
+    {
+        public string userId;
+        public string scanCode;
+    }
+
     #endregion
 
     #region Params
@@ -124,6 +130,7 @@ namespace ACBC.Buss
         public string userImg;
         public string phone;
         public string userType;
+        public string scanCode;
     }
 
     public class ShopRecord

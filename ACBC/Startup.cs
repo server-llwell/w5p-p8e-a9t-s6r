@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ACBC.Common;
+using ACBC.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -58,6 +59,7 @@ namespace ACBC
             }
             app.UseCors("AllowSameDomain");
             app.UseMvc();
+            app.Map("/api/PG/ws", SocketController.Map);
         }
     }
 }

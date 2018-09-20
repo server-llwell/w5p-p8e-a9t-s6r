@@ -1,10 +1,14 @@
-﻿using Senparc.Weixin.WxOpen.Containers;
+﻿using Newtonsoft.Json;
+using Senparc.Weixin.Cache.Redis;
+using Senparc.Weixin.WxOpen.Containers;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ACBC.Common
@@ -26,6 +30,33 @@ namespace ACBC.Common
             return sessionBag.OpenId;
         }
 
+        public static bool SetCache(string key, object value)
+        {
+            var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
+            var expiry = new TimeSpan(0, 0, 10);
+            string valueStr = JsonConvert.SerializeObject(value);
+            return db.StringSet(key, valueStr, expiry);
+        }
+
+        public static dynamic GetCache<T>(string key)
+        {
+            var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
+            if(db.StringGet(key).HasValue)
+            {
+                return JsonConvert.DeserializeObject<T>(db.StringGet(key));
+            }
+            return null;
+        }
+
+        public static bool DeleteCache(string key)
+        {
+            var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
+            if (db.StringGet(key).HasValue)
+            {
+                return db.KeyDelete(key);
+            }
+            return true;
+        }
 
         public static string PostHttp(string url, string body, string contentType)
         {

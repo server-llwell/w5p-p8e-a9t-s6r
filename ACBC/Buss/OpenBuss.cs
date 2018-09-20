@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
-using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +20,6 @@ namespace ACBC.Buss
 
         public object Do_Login(BaseApi baseApi)
         {
-            //var redisManger = new RedisManagerPool(Global.REDIS);      //Redis的连接字符串
-
-            //var redis = redisManger.GetClient();
-            //var redisTodos = redis.As<long>();
-            //long ssss = redisTodos.GetNextSequence();
-            //redisTodos.Store(ssss, new TimeSpan(10));
-            //long s = redisTodos.GetById(1);
-
             LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(baseApi.param.ToString());
             if (loginParam == null)
             {
