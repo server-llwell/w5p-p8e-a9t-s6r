@@ -190,6 +190,11 @@ namespace ACBC.Buss
         public int paid;
 
         public double payMoney;
+
+        public string userName;
+        public string userImg;
+
+        public string phone;
     }
 
     public class RecordStateList
@@ -225,5 +230,11 @@ namespace ACBC.Buss
         public string payState;
     }
 
-        #endregion
+    public class HomeImg
+    {
+        public string homeImgId;
+        public string img;
+        public string urlCode;
+    }
+    #endregion
 }

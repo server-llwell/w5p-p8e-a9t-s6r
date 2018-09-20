@@ -12,6 +12,28 @@ namespace ACBC.Dao
 {
     public class UserDao
     {
+        public List<HomeImg> GetHomeImg()
+        {
+            List<HomeImg> list = new List<HomeImg>();
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UserSqls.SELECT_HOME_IMG);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                HomeImg homeImg = new HomeImg
+                {
+                    homeImgId = dt.Rows[0]["HOME_IMG_ID"].ToString(),
+                    img = dt.Rows[0]["IMG"].ToString(),
+                    urlCode = dt.Rows[0]["URL_CODE"].ToString(),
+                };
+                list.Add(homeImg);
+            }
+
+            return list;
+        }
+
         public List<ShopShow> GetShopShow()
         {
             List<ShopShow> list = new List<ShopShow>();
@@ -137,7 +159,24 @@ namespace ACBC.Dao
             StringBuilder builder = new StringBuilder();
             string sql;
             DataTable dt;
+            User user;
             double sumMoney = 0;
+            builder.AppendFormat(UserSqls.SELECT_USER_BY_USER_ID, userId);
+            sql = builder.ToString();
+            builder.Clear();
+            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                user = new User
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString(),
+                    userImg = dt.Rows[0]["USER_IMG"].ToString(),
+                    phone = dt.Rows[0]["USER_PHONE"].ToString(),
+                };
+                recordStateSum.userName = user.userName;
+                recordStateSum.userImg = user.userImg;
+                recordStateSum.phone = user.phone;
+            }
             switch (userType)
             {
                 case "0":
@@ -453,6 +492,10 @@ namespace ACBC.Dao
 
     public class UserSqls
     {
+        public const string SELECT_HOME_IMG = ""
+            + "SELECT * "
+            + "FROM T_BASE_HOME_IMG "
+            + "ORDER BY SORT";
         public const string SELECT_SHOP_SHOW = ""
             + "SELECT * "
             + "FROM T_BASE_SHOP "
@@ -474,6 +517,10 @@ namespace ACBC.Dao
             + "SELECT * "
             + "FROM T_BASE_USER "
             + "WHERE OPENID = '{0}'";
+        public const string SELECT_USER_BY_USER_ID = ""
+            + "SELECT * "
+            + "FROM T_BASE_USER "
+            + "WHERE USER_ID = '{0}'";
         public const string SELECT_USER_RECORD_BY_USER_ID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD RECORD,"

@@ -18,8 +18,10 @@ namespace ACBC.Buss
         public object Do_GetShopShow(BaseApi baseApi)
         {
             UserDao userDao = new UserDao();
-            List<ShopShow> list = userDao.GetShopShow();
-            return list;
+            List<ShopShow> listShop = userDao.GetShopShow();
+            List<HomeImg> listHome = userDao.GetHomeImg();
+
+            return new { listHome, listShop };
         }
 
         public object Do_GetShopInfo(BaseApi baseApi)
@@ -73,7 +75,27 @@ namespace ACBC.Buss
 
             RecordStateList recordStateList = userDao.GetStateList(user.userId, user.userType);
 
-            return recordStateList;
+            return new
+            {
+                process = new {
+                    recordStateList.processList,
+                    recordStateList.process,
+                    recordStateList.processMoney,
+                    recordStateList.processTotal,
+                },
+                pay = new {
+                    recordStateList.payList,
+                    recordStateList.pay,
+                    recordStateList.payMoney,
+                    recordStateList.payTotal,
+                },
+                paid = new {
+                    recordStateList.paidList,
+                    recordStateList.paid,
+                    recordStateList.paidMoney,
+                    recordStateList.paidTotal,
+                },
+            };
         }
     }
 }
