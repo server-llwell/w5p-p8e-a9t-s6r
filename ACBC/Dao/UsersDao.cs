@@ -88,13 +88,12 @@ namespace ACBC.Dao
                     openid = dt.Rows[0]["OPENID"].ToString(),
                     userImg = dt.Rows[0]["USER_IMG"].ToString(),
                     phone = dt.Rows[0]["USER_PHONE"].ToString(),
+                    userType = dt.Rows[0]["USER_TYPE"].ToString(),
                 };
             }
 
             return user;
         }
-
-
 
         public User GetUserByPhone(string phone)
         {

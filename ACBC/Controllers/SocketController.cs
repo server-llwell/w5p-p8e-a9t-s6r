@@ -55,7 +55,7 @@ namespace ACBC.Controllers
                     continue;
                 }
                 Utils.DeleteCache(scanCode);
-                string userMsg = "Sucess";
+                string userMsg = "Success";
                 byte[] x = Encoding.UTF8.GetBytes(userMsg);
                 var outgoing = new ArraySegment<byte>(x);
                 await this.socket.SendAsync(outgoing, WebSocketMessageType.Text, true, CancellationToken.None);

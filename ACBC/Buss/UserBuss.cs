@@ -97,5 +97,27 @@ namespace ACBC.Buss
                 },
             };
         }
+
+        public object Do_GetBankCard(BaseApi baseApi)
+        {
+            UserDao userDao = new UserDao();
+            Bankcard bankcard = userDao.GetBankcardIfNullInsert(Utils.GetOpenID(baseApi.token));
+            return bankcard;
+        }
+
+        public object Do_UpdateBankCard(BaseApi baseApi)
+        {
+            UpdateBankcardParam updateBankcardParam = JsonConvert.DeserializeObject<UpdateBankcardParam>(baseApi.param.ToString());
+            if (updateBankcardParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            UserDao userDao = new UserDao();
+            if (!userDao.UpdateBankcardByOpenId(updateBankcardParam, Utils.GetOpenID(baseApi.token)))
+            {
+                throw new ApiException(CodeMessage.UpdateBankcardError, "UpdateBankcardError");
+            }
+            return "";
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -488,10 +489,87 @@ namespace ACBC.Dao
 
             return recordStateList;
         }
+
+        public Bankcard GetBankcardIfNullInsert(string openId)
+        {
+            Bankcard bankcard = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UserSqls.SELECT_BANKCARD_BY_OPENID, openId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                if(dt.Rows.Count == 0)
+                {
+                    builder.Clear();
+                    builder.AppendFormat(UserSqls.INSERT_BANKCARD_IF_NULL, openId);
+                    string sqlInsert = builder.ToString();
+                    builder.Clear();
+                    builder.AppendFormat(UserSqls.UPDATE_USER_BANKCARD_ID_BY_OPENID, openId);
+                    string sqlUpdate = builder.ToString();
+                    ArrayList list = new ArrayList();
+                    list.Add(sqlInsert);
+                    list.Add(sqlUpdate);
+                    DatabaseOperationWeb.ExecuteDML(list);
+                    return GetBankcardIfNullInsert(openId);
+                }
+                else
+                {
+                    bankcard = new Bankcard
+                    {
+                        bankcardId = dt.Rows[0]["BANKCARD_ID"].ToString(),
+                        bankcardCode = dt.Rows[0]["BANKCARD_CODE"].ToString(),
+                        bankName = dt.Rows[0]["BANK_NAME"].ToString(),
+                        subName = dt.Rows[0]["SUB_NAME"].ToString(),
+                        bankcardUserName = dt.Rows[0]["BANKCARD_USER_NAME"].ToString(),
+                    };
+                }
+            }
+
+            return bankcard;
+        }
+
+        public bool UpdateBankcardByOpenId(UpdateBankcardParam updateBankcardParam, string openId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                UserSqls.UPDATE_BANKCARD_BY_OPENID, 
+                openId, 
+                updateBankcardParam.bankcardCode, 
+                updateBankcardParam.bankName, 
+                updateBankcardParam.subName, 
+                updateBankcardParam.bankcardUserName);
+            string sqlUpdate = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
+        }
     }
 
     public class UserSqls
     {
+        public const string SELECT_BANKCARD_BY_OPENID = ""
+            + "SELECT * "
+            + "FROM T_BASE_USER A,T_BASE_BANKCARD B "
+            + "WHERE A.USER_BANKCARD_ID = B.BANKCARD_ID "
+            + "AND A.OPENID = '{0}'";
+        public const string INSERT_BANKCARD_IF_NULL = ""
+            + "INSERT INTO T_BASE_BANKCARD"
+            + "(OPENID,BANKCARD_CODE,BANK_NAME,SUB_NAME,BANKCARD_USER_NAME) "
+            + "VALUES('{0}','','','','') ";
+        public const string UPDATE_BANKCARD_BY_OPENID = ""
+            + "UPDATE T_BASE_BANKCARD "
+            + "SET BANKCARD_CODE = '{1}',"
+            + "BANK_NAME = '{2}',"
+            + "SUB_NAME = '{3}',"
+            + "BANKCARD_USER_NAME = '{4}' "
+            + "WHERE OPENID = '{0}' ";
+        public const string UPDATE_USER_BANKCARD_ID_BY_OPENID = ""
+            + "UPDATE T_BASE_USER "
+            + "SET USER_BANKCARD_ID = "
+            + "(SELECT BANKCARD_ID " 
+            + "FROM T_BASE_BANKCARD " 
+            + "WHERE OPENID = '{0}') "
+            + "WHERE OPENID = '{0}'";
         public const string SELECT_HOME_IMG = ""
             + "SELECT * "
             + "FROM T_BASE_HOME_IMG "

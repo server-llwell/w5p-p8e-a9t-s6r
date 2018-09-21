@@ -106,6 +106,14 @@ namespace ACBC.Buss
         public string shopId;
     }
 
+    public class UpdateBankcardParam
+    {
+        public string bankcardCode;
+        public string bankName;
+        public string subName;
+        public string bankcardUserName;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -235,6 +243,15 @@ namespace ACBC.Buss
         public string homeImgId;
         public string img;
         public string urlCode;
+    }
+
+    public class Bankcard
+    {
+        public string bankcardId;
+        public string bankcardCode;
+        public string bankName;
+        public string subName;
+        public string bankcardUserName;
     }
     #endregion
 }
