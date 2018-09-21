@@ -119,5 +119,24 @@ namespace ACBC.Buss
             }
             return "";
         }
+
+        public object Do_ApplyRecord(BaseApi baseApi)
+        {
+            UserDao userDao = new UserDao();
+            string openId = Utils.GetOpenID(baseApi.token);
+            var user = userDao.GetUserByOpenID(openId);
+            if (user == null)
+            {
+                throw new ApiException(CodeMessage.UserNotExist, "UserNotExist");
+            }
+
+            RecordStateSum recordStateSum = userDao.GetStateSum(user.userId, user.userType);
+
+
+            UserApply userApply = new UserApply();
+            userApply.money = recordStateSum.payMoney.ToString();
+
+            return userApply;
+        }
     }
 }

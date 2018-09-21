@@ -370,6 +370,10 @@ namespace ACBC.Dao
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["SHOP_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["SHOP_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ? 
+                                        "1" : "2") : ""),
                         };
                         recordStateList.processList.Add(recordState);
                     }
@@ -389,6 +393,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.processList.Add(recordState);
                     }
@@ -409,6 +417,10 @@ namespace ACBC.Dao
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["SHOP_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["SHOP_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.payList.Add(recordState);
                     }
@@ -428,6 +440,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.payList.Add(recordState);
                     }
@@ -448,6 +464,10 @@ namespace ACBC.Dao
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["SHOP_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["SHOP_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.paidList.Add(recordState);
                     }
@@ -467,6 +487,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
+                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.paidList.Add(recordState);
                     }
@@ -543,6 +567,75 @@ namespace ACBC.Dao
             string sqlUpdate = builder.ToString();
             return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
         }
+
+        //public bool UpdateUserApply(string userId, string userType)
+        //{
+        //    StringBuilder builder = new StringBuilder();
+        //    string sql;
+        //    DataTable dt;
+        //    User user;
+        //    double sumMoney = 0;
+        //    string needUpdate = "";
+        //    switch (userType)
+        //    {
+        //        case "0":
+        //            builder.AppendFormat(
+        //                UserSqls.SELECT_USER_RECORD_BY_USER_ID,
+        //                userId
+        //            );
+        //            sql = builder.ToString();
+        //            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+        //            DataRow[] drsPayNotApply = dt.Select("PAY_STATE = 1 AND USER_PAY_STATE = 0");
+
+        //            foreach (DataRow dr in drsPayNotApply)
+        //            {
+        //                sumMoney += Convert.ToDouble(dr["USER_MONEY"]);
+        //                needUpdate += dr["RECORD_ID"].ToString() + ",";
+        //            }
+
+        //            break;
+        //        case "1":
+        //            builder.AppendFormat(
+        //                UserSqls.SELECT_USER_RECORD_BY_AGENT_USER_ID,
+        //                userId
+        //            );
+        //            sql = builder.ToString();
+        //            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+
+
+        //            DataRow[] drsShopAgentPayNotApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 0");
+        //            DataRow[] drsUserAgentPayNotApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 0");
+
+        //            foreach (DataRow dr in drsShopAgentPayNotApply)
+        //            {
+        //                sumMoney += Convert.ToDouble(dr["SHOP_AGENT_MONEY"]);
+        //            }
+
+        //            foreach (DataRow dr in drsUserAgentPayNotApply)
+        //            {
+        //                sumMoney += Convert.ToDouble(dr["USER_AGENT_MONEY"]);
+        //            }
+
+                    
+        //            break;
+
+        //    }
+        //}
+
+        //public bool GetUserApplySum()
+        //{
+
+        //}
+
+        //public bool GetConfigByCode()
+        //{
+
+        //}
+
+        //public bool InsertApply()
+        //{
+
+        //}
     }
 
     public class UserSqls

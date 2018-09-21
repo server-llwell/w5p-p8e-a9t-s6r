@@ -236,6 +236,7 @@ namespace ACBC.Buss
         public string payTime;
         public string payAddr;
         public string payState;
+        public string payStateEx;
     }
 
     public class HomeImg
@@ -252,6 +253,13 @@ namespace ACBC.Buss
         public string bankName;
         public string subName;
         public string bankcardUserName;
+    }
+
+    public class UserApply
+    {
+        public string money;
+        public string applyAddr;
+        public string applyTime;
     }
     #endregion
 }
