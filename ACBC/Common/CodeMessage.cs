@@ -50,5 +50,7 @@ namespace ACBC.Common
         InvalidShopInfo = 10401,
         UserNotExist = 10402,
         UpdateBankcardError = 10403,
+        NeedBankcardFirst = 10404,
+        ApplyRecordError = 10405,
     }
 }

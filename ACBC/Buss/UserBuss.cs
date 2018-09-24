@@ -122,6 +122,12 @@ namespace ACBC.Buss
 
         public object Do_ApplyRecord(BaseApi baseApi)
         {
+            ApplyPayParam applyPayParam = JsonConvert.DeserializeObject<ApplyPayParam>(baseApi.param.ToString());
+            if (applyPayParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            
             UserDao userDao = new UserDao();
             string openId = Utils.GetOpenID(baseApi.token);
             var user = userDao.GetUserByOpenID(openId);
@@ -129,14 +135,38 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.UserNotExist, "UserNotExist");
             }
-
-            RecordStateSum recordStateSum = userDao.GetStateSum(user.userId, user.userType);
-
-
-            UserApply userApply = new UserApply();
-            userApply.money = recordStateSum.payMoney.ToString();
-
-            return userApply;
+            Bankcard userBankcard = userDao.GetBankcard(openId);
+            if(applyPayParam.payType == "1" && userBankcard == null)
+            {
+                throw new ApiException(CodeMessage.NeedBankcardFirst, "NeedBankcardFirst");
+            }
+            var keyValues = userDao.GetConfig();
+            DateTime dateTime = DateTime.Now;
+            var configDayOfWeek = Enum.Parse<DayOfWeek>(keyValues["APPLY_DAY"].configValue, true);
+            while (dateTime.DayOfWeek != configDayOfWeek)
+            {
+                dateTime = dateTime.AddDays(1);
+            }
+            string applyTime = applyPayParam.payType == "0" ?
+                dateTime.ToString("yyyy-MM-dd") + " " + keyValues["APPLY_TIME"].configValue :
+                DateTime.Now.AddDays(Convert.ToInt32(keyValues["APPLY_BANKCARD_TIME"].configValue)).ToString("yyyy-MM-dd");
+            string applyAddr = applyPayParam.payType == "0" ? keyValues["APPLY_ADDR"].configValue : "";
+            string guid = Guid.NewGuid().ToString();
+            bool ifUpdate = userDao.UpdateUserApply(
+                                        user.userId, 
+                                        user.userType, 
+                                        applyPayParam.payType,
+                                        applyAddr,
+                                        applyTime,
+                                        userBankcard.bankcardId,
+                                        guid
+                                        );
+            if(!ifUpdate)
+            {
+                throw new ApiException(CodeMessage.ApplyRecordError, "ApplyRecordError");
+            }
+            PayApply payApply = userDao.GetPayApply(guid);
+            return payApply;
         }
     }
 }

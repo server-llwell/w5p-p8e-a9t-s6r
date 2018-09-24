@@ -514,7 +514,7 @@ namespace ACBC.Dao
             return recordStateList;
         }
 
-        public Bankcard GetBankcardIfNullInsert(string openId)
+        public Bankcard GetBankcard(string openId)
         {
             Bankcard bankcard = null;
 
@@ -522,33 +522,39 @@ namespace ACBC.Dao
             builder.AppendFormat(UserSqls.SELECT_BANKCARD_BY_OPENID, openId);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null)
+
+            if (dt != null && dt.Rows.Count == 1)
             {
-                if(dt.Rows.Count == 0)
+                bankcard = new Bankcard
                 {
-                    builder.Clear();
-                    builder.AppendFormat(UserSqls.INSERT_BANKCARD_IF_NULL, openId);
-                    string sqlInsert = builder.ToString();
-                    builder.Clear();
-                    builder.AppendFormat(UserSqls.UPDATE_USER_BANKCARD_ID_BY_OPENID, openId);
-                    string sqlUpdate = builder.ToString();
-                    ArrayList list = new ArrayList();
-                    list.Add(sqlInsert);
-                    list.Add(sqlUpdate);
-                    DatabaseOperationWeb.ExecuteDML(list);
-                    return GetBankcardIfNullInsert(openId);
-                }
-                else
-                {
-                    bankcard = new Bankcard
-                    {
-                        bankcardId = dt.Rows[0]["BANKCARD_ID"].ToString(),
-                        bankcardCode = dt.Rows[0]["BANKCARD_CODE"].ToString(),
-                        bankName = dt.Rows[0]["BANK_NAME"].ToString(),
-                        subName = dt.Rows[0]["SUB_NAME"].ToString(),
-                        bankcardUserName = dt.Rows[0]["BANKCARD_USER_NAME"].ToString(),
-                    };
-                }
+                    bankcardId = dt.Rows[0]["BANKCARD_ID"].ToString(),
+                    bankcardCode = dt.Rows[0]["BANKCARD_CODE"].ToString(),
+                    bankName = dt.Rows[0]["BANK_NAME"].ToString(),
+                    subName = dt.Rows[0]["SUB_NAME"].ToString(),
+                    bankcardUserName = dt.Rows[0]["BANKCARD_USER_NAME"].ToString(),
+                };
+            }
+
+            return bankcard;
+        }
+
+        public Bankcard GetBankcardIfNullInsert(string openId)
+        {
+            Bankcard bankcard = GetBankcard(openId);
+
+            if (bankcard == null)
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.AppendFormat(UserSqls.INSERT_BANKCARD_IF_NULL, openId);
+                string sqlInsert = builder.ToString();
+                builder.Clear();
+                builder.AppendFormat(UserSqls.UPDATE_USER_BANKCARD_ID_BY_OPENID, openId);
+                string sqlUpdate = builder.ToString();
+                ArrayList list = new ArrayList();
+                list.Add(sqlInsert);
+                list.Add(sqlUpdate);
+                DatabaseOperationWeb.ExecuteDML(list);
+                return GetBankcardIfNullInsert(openId);
             }
 
             return bankcard;
@@ -568,78 +574,162 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
         }
 
-        //public bool UpdateUserApply(string userId, string userType)
-        //{
-        //    StringBuilder builder = new StringBuilder();
-        //    string sql;
-        //    DataTable dt;
-        //    User user;
-        //    double sumMoney = 0;
-        //    string needUpdate = "";
-        //    switch (userType)
-        //    {
-        //        case "0":
-        //            builder.AppendFormat(
-        //                UserSqls.SELECT_USER_RECORD_BY_USER_ID,
-        //                userId
-        //            );
-        //            sql = builder.ToString();
-        //            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-        //            DataRow[] drsPayNotApply = dt.Select("PAY_STATE = 1 AND USER_PAY_STATE = 0");
+        public Dictionary<string, ConfigItem> GetConfig()
+        {
+            Dictionary<string, ConfigItem> keyValues = new Dictionary<string, ConfigItem>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                        UserSqls.SELECT_CONFIG_ALL
+                    );
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach(DataRow dr in dt.Rows)
+                {
+                    ConfigItem item = new ConfigItem
+                    {
+                        configCode = dr["CONFIG_CODE"].ToString(),
+                        configValue = dr["CONFIG_VALUE"].ToString(),
+                        configDesc = dr["CONFIG_DESC"].ToString(),
+                    };
+                    keyValues.Add(item.configCode, item);
+                }
+            }
 
-        //            foreach (DataRow dr in drsPayNotApply)
-        //            {
-        //                sumMoney += Convert.ToDouble(dr["USER_MONEY"]);
-        //                needUpdate += dr["RECORD_ID"].ToString() + ",";
-        //            }
+            return keyValues;
+        }
+        
+        public bool UpdateUserApply(
+            string userId, 
+            string userType, 
+            string payType, 
+            string applyAddr, 
+            string applyTime,
+            string bankcardId,
+            string guid)
+        {
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            ArrayList list = new ArrayList();
+            switch (userType)
+            {
+                case "0":
+                    builder.AppendFormat(
+                        UserSqls.UPDATE_RECORD_USER_PAY_GUID,
+                        userId,
+                        applyTime,
+                        applyAddr,
+                        guid,
+                        payType
+                    );
+                    sql = builder.ToString();
+                    list.Add(sql);
+                    builder.Clear();
+                    if (payType == "0")
+                    {
+                        builder.AppendFormat(
+                            UserSqls.INSERT_BUSS_PAY_GUID,
+                            guid,
+                            applyTime,
+                            userId,
+                            applyAddr
+                        );
+                    }
+                    else
+                    {
+                        builder.AppendFormat(
+                            UserSqls.INSERT_BUSS_BANKCARD_PAY_GUID,
+                            guid,
+                            applyTime,
+                            userId,
+                            applyAddr,
+                            bankcardId
+                         );
+                    }
+                    sql = builder.ToString();
+                    list.Add(sql);
+                    return DatabaseOperationWeb.ExecuteDML(list);
+                case "1":
+                    builder.AppendFormat(
+                        UserSqls.UPDATE_RECORD_SHOP_AGENT_PAY_GUID,
+                        userId,
+                        applyTime,
+                        applyAddr,
+                        guid,
+                        payType
+                    );
+                    sql = builder.ToString();
+                    list.Add(sql);
+                    builder.Clear();
+                    builder.AppendFormat(
+                        UserSqls.UPDATE_RECORD_USER_AGENT_PAY_GUID,
+                        userId,
+                        applyTime,
+                        applyAddr,
+                        guid,
+                        payType
+                    );
+                    sql = builder.ToString();
+                    list.Add(sql);
+                    builder.Clear();
+                    if (payType == "0")
+                    {
+                        builder.AppendFormat(
+                            UserSqls.INSERT_BUSS_PAY_GUID,
+                            guid,
+                            applyTime,
+                            userId,
+                            applyAddr
+                        );
+                    }
+                    else
+                    {
+                        builder.AppendFormat(
+                            UserSqls.INSERT_BUSS_BANKCARD_PAY_GUID,
+                            guid,
+                            applyTime,
+                            userId,
+                            applyAddr,
+                            bankcardId
+                         );
+                    }
+                    sql = builder.ToString();
+                    list.Add(sql);
+                    return DatabaseOperationWeb.ExecuteDML(list);
+                default:
+                    return false;
+            }
+        }
 
-        //            break;
-        //        case "1":
-        //            builder.AppendFormat(
-        //                UserSqls.SELECT_USER_RECORD_BY_AGENT_USER_ID,
-        //                userId
-        //            );
-        //            sql = builder.ToString();
-        //            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+        public PayApply GetPayApply(string guid)
+        {
+            PayApply payApply = null;
 
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UserSqls.SELECT_PAY_APPLY_BY_GUID, guid);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
 
-        //            DataRow[] drsShopAgentPayNotApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 0");
-        //            DataRow[] drsUserAgentPayNotApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 0");
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                payApply = new PayApply
+                {
+                    money = dt.Rows[0]["MONEY"].ToString(),
+                    applyAddr = dt.Rows[0]["ADDR"].ToString(),
+                    payTime = dt.Rows[0]["PAY_TIME"].ToString(),
+                };
+            }
 
-        //            foreach (DataRow dr in drsShopAgentPayNotApply)
-        //            {
-        //                sumMoney += Convert.ToDouble(dr["SHOP_AGENT_MONEY"]);
-        //            }
-
-        //            foreach (DataRow dr in drsUserAgentPayNotApply)
-        //            {
-        //                sumMoney += Convert.ToDouble(dr["USER_AGENT_MONEY"]);
-        //            }
-
-                    
-        //            break;
-
-        //    }
-        //}
-
-        //public bool GetUserApplySum()
-        //{
-
-        //}
-
-        //public bool GetConfigByCode()
-        //{
-
-        //}
-
-        //public bool InsertApply()
-        //{
-
-        //}
+            return payApply;
+        }
     }
 
     public class UserSqls
     {
+        public const string SELECT_CONFIG_ALL = ""
+            + "SELECT * "
+            + "FROM T_BASE_CONFIG ";
         public const string SELECT_BANKCARD_BY_OPENID = ""
             + "SELECT * "
             + "FROM T_BASE_USER A,T_BASE_BANKCARD B "
@@ -710,5 +800,83 @@ namespace ACBC.Dao
             + "AND RECORD.USER_ID = USER.USER_ID "
             + "AND (USER.USER_AGENT = {0} OR SHOP.SHOP_AGENT = {0})"
             + "ORDER BY RECORD_TIME DESC";
+        public const string UPDATE_RECORD_USER_PAY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET USER_PAY_STATE = 1, "
+            + "USER_PAY_TYPE = {4}, "
+            + "USER_PAY_APPLY_TIME = NOW(), "
+            + "USER_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
+            + "USER_PAY_ADDR = '{2}', "
+            + "USER_PAY_GUID = '{3}' "
+            + "WHERE PAY_STATE = 1 "
+            + "AND USER_PAY_STATE = 0 "
+            + "AND USER_ID = {0}";
+        public const string UPDATE_RECORD_SHOP_AGENT_PAY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET SHOP_AGENT_PAY_STATE = 1, "
+            + "SHOP_AGENT_PAY_TYPE = {4}, "
+            + "SHOP_AGENT_PAY_APPLY_TIME = NOW(), "
+            + "SHOP_AGENT_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
+            + "SHOP_AGENT_PAY_ADDR = '{2}', "
+            + "SHOP_AGENT_PAY_GUID = '{3}' "
+            + "WHERE PAY_STATE = 1 "
+            + "AND SHOP_AGENT_PAY_STATE = 0 "
+            + "AND SHOP_ID IN(SELECT SHOP_ID FROM T_BASE_SHOP WHERE SHOP_AGENT = {0}) ";
+        public const string UPDATE_RECORD_USER_AGENT_PAY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET USER_AGENT_PAY_STATE = 1, "
+            + "USER_AGENT_PAY_TYPE = {4}, "
+            + "USER_AGENT_PAY_APPLY_TIME = NOW(), "
+            + "USER_AGENT_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
+            + "USER_AGENT_PAY_ADDR = '{2}', "
+            + "USER_AGENT_PAY_GUID = '{3}' "
+            + "WHERE PAY_STATE = 1 "
+            + "AND USER_AGENT_PAY_STATE = 0 "
+            + "AND USER_ID IN(SELECT USER_ID FROM T_BASE_USER WHERE USER_AGENT = {0}) ";
+        public const string INSERT_BUSS_BANKCARD_PAY_GUID = ""
+            + "INSERT INTO T_BUSS_PAY "
+            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,PAY_BANKCARD_ID,MONEY,PAY_STATE,GUID) "
+            + "VALUES("
+            + "STR_TO_DATE('{1}', '%Y-%m-%d %H'),"
+            + "NOW(),"
+            + "{2},"
+            + "'{3}',"
+            + "1,"
+            + "{4},"
+            + "(IFNULL((" + SELECT_RECORD_USER_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_SUM_BY_GUID + "),0)),"
+            + "0,"
+            + "'{0}')";
+        public const string INSERT_BUSS_PAY_GUID = ""
+            + "INSERT INTO T_BUSS_PAY "
+            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,MONEY,PAY_STATE,GUID) "
+            + "VALUES("
+            + "STR_TO_DATE('{1}', '%Y-%m-%d %H'),"
+            + "NOW(),"
+            + "{2},"
+            + "'{3}',"
+            + "0,"
+            + "(IFNULL((" + SELECT_RECORD_USER_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_SUM_BY_GUID + "),0)),"
+            + "0,"
+            + "'{0}')";
+        public const string SELECT_RECORD_USER_SUM_BY_GUID = ""
+            + "SELECT SUM(USER_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_PAY_GUID = '{0}'";
+        public const string SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID = ""
+            + "SELECT SUM(SHOP_AGENT_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}'";
+        public const string SELECT_RECORD_USER_AGENT_SUM_BY_GUID = ""
+            + "SELECT SUM(USER_AGENT_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_AGENT_PAY_GUID = '{0}'";
+        public const string SELECT_PAY_APPLY_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_PAY "
+            + "WHERE GUID = '{0}'";
     }
 }

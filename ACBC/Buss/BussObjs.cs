@@ -114,6 +114,11 @@ namespace ACBC.Buss
         public string bankcardUserName;
     }
 
+    public class ApplyPayParam
+    {
+        public string payType;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -255,11 +260,20 @@ namespace ACBC.Buss
         public string bankcardUserName;
     }
 
-    public class UserApply
+    public class ConfigItem
+    {
+        public string configCode;
+        public string configValue;
+        public string configDesc;
+    }
+
+    public class PayApply
     {
         public string money;
         public string applyAddr;
-        public string applyTime;
+        public string payTime;
     }
+
+
     #endregion
 }
