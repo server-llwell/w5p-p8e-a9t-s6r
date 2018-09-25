@@ -284,6 +284,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_PAY_TIME"].ToString(),
                             payAddr = dr["USER_PAY_ADDR"].ToString(),
                             payState = dr["USER_PAY_STATE"].ToString(),
+                            payStateEx = dr["USER_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.processList.Add(recordState);
                     }
@@ -303,6 +307,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_PAY_TIME"].ToString(),
                             payAddr = dr["USER_PAY_ADDR"].ToString(),
                             payState = dr["USER_PAY_STATE"].ToString(),
+                            payStateEx = dr["USER_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.payList.Add(recordState);
                     }
@@ -322,6 +330,10 @@ namespace ACBC.Dao
                             payTime = dr["USER_PAY_TIME"].ToString(),
                             payAddr = dr["USER_PAY_ADDR"].ToString(),
                             payState = dr["USER_PAY_STATE"].ToString(),
+                            payStateEx = dr["USER_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_PAY_TYPE"].ToString() == "0" ?
+                                        "1" : "2") : ""),
                         };
                         recordStateList.paidList.Add(recordState);
                     }
@@ -393,9 +405,9 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
-                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
-                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
-                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            payStateEx = dr["USER_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
                                         "1" : "2") : ""),
                         };
                         recordStateList.processList.Add(recordState);
@@ -440,9 +452,9 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
-                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
-                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
-                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            payStateEx = dr["USER_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
                                         "1" : "2") : ""),
                         };
                         recordStateList.payList.Add(recordState);
@@ -487,9 +499,9 @@ namespace ACBC.Dao
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
                             payAddr = dr["USER_AGENT_PAY_ADDR"].ToString(),
                             payState = dr["USER_AGENT_PAY_STATE"].ToString(),
-                            payStateEx = dr["SHOP_AGENT_PAY_STATE"].ToString() == "0" ?
-                                        "0" : (dr["SHOP_AGENT_PAY_STATE"].ToString() == "1" ?
-                                        (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            payStateEx = dr["USER_AGENT_PAY_STATE"].ToString() == "0" ?
+                                        "0" : (dr["USER_AGENT_PAY_STATE"].ToString() == "1" ?
+                                        (dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
                                         "1" : "2") : ""),
                         };
                         recordStateList.paidList.Add(recordState);
