@@ -162,7 +162,13 @@ namespace ACBC.Buss
             }
 
             UsersDao usersDao = new UsersDao();
-            if(!usersDao.UpdateUserPhone(Utils.GetOpenID(baseApi.token), updatePhoneParam.phone))
+            User user = usersDao.GetUserByPhone(updatePhoneParam.phone);
+            if (user != null)
+            {
+                throw new ApiException(CodeMessage.PhoneExist, "PhoneExist");
+            }
+
+            if (!usersDao.UpdateUserPhone(Utils.GetOpenID(baseApi.token), updatePhoneParam.phone))
             {
                 throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
             }
