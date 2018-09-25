@@ -168,6 +168,16 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public bool UpdateUserPhone(string openID, string phone)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.UPDATE_USER_PHONE,
+                openID,
+                phone);
+            string sqlUpdate = builder.ToString();
+
+            return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
+        }
     }
 
     public class UsersSqls
@@ -212,6 +222,10 @@ namespace ACBC.Dao
             + "UPDATE T_BUSS_AGENT_CODE "
             + "SET AGENT_STATE = AGENT_STATE - 1 "
             + "WHERE AGENT_CODE = '{0}'";
+        public const string UPDATE_USER_PHONE = ""
+            + "UPDATE T_BASE_USER "
+            + "SET USER_PHONE = {1} "
+            + "WHERE OPENID = '{0}'";
     }
 
 

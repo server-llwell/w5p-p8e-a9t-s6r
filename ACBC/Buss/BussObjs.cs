@@ -119,6 +119,12 @@ namespace ACBC.Buss
         public string payType;
     }
 
+    public class UpdatePhoneParam
+    {
+        public string phone;
+        public string checkCode;
+    }
+
     #endregion
 
     #region DaoObjs

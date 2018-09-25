@@ -46,6 +46,7 @@ namespace ACBC.Common
         UserExist = 10302,
         InvalidAgentCode = 10303,
         PhoneExist = 10304,
+        UpdatePhoneError = 10305,
 
         InvalidShopInfo = 10401,
         UserNotExist = 10402,

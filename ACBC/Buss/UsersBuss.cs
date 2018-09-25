@@ -139,6 +139,37 @@ namespace ACBC.Buss
             return "";
         }
 
+        public object Do_UpdateUserPhone(BaseApi baseApi)
+        {
+            UpdatePhoneParam updatePhoneParam = JsonConvert.DeserializeObject<UpdatePhoneParam>(baseApi.param.ToString());
+            if (updatePhoneParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            if (sessionBag == null || sessionBag.Name == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            if (sessionUser == null ||
+                sessionUser.checkCode == null ||
+                sessionUser.checkCode != updatePhoneParam.checkCode ||
+                sessionUser.checkPhone != updatePhoneParam.phone)
+            {
+                throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
+            }
+
+            UsersDao usersDao = new UsersDao();
+            if(!usersDao.UpdateUserPhone(Utils.GetOpenID(baseApi.token), updatePhoneParam.phone))
+            {
+                throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
+            }
+
+            return "";
+        }
+
         public object Do_UserReg(BaseApi baseApi)
         {
             UserRegParam userRegParam = JsonConvert.DeserializeObject<UserRegParam>(baseApi.param.ToString());
