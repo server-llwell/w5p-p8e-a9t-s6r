@@ -158,7 +158,7 @@ namespace ACBC.Buss
                                         applyPayParam.payType,
                                         applyAddr,
                                         applyTime,
-                                        userBankcard.bankcardId,
+                                        userBankcard == null?"":userBankcard.bankcardId,
                                         guid
                                         );
             if(!ifUpdate)

@@ -239,6 +239,7 @@ namespace ACBC.Buss
     {
         public string recordId;
         public string recordTime;
+        public string shopName;
         public double total;
         public string rate;
         public double money;

@@ -275,6 +275,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
@@ -298,6 +299,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
@@ -321,6 +323,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
@@ -373,6 +376,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
@@ -396,6 +400,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
@@ -420,6 +425,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
@@ -443,6 +449,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
@@ -467,6 +474,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
@@ -490,6 +498,7 @@ namespace ACBC.Dao
                         RecordState recordState = new RecordState
                         {
                             recordId = dr["RECORD_ID"].ToString(),
+                            shopName = dr["SHOP_NAME_ZH"].ToString(),
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
@@ -822,7 +831,7 @@ namespace ACBC.Dao
             + "USER_PAY_GUID = '{3}' "
             + "WHERE PAY_STATE = 1 "
             + "AND USER_PAY_STATE = 0 "
-            + "AND USER_ID = {0}";
+            + "AND USER_ID = {0}"; 
         public const string UPDATE_RECORD_SHOP_AGENT_PAY_GUID = ""
             + "UPDATE T_BUSS_RECORD "
             + "SET SHOP_AGENT_PAY_STATE = 1, "
