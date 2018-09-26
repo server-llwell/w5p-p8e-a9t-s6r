@@ -81,18 +81,21 @@ namespace ACBC.Buss
                     recordStateList.processList,
                     recordStateList.process,
                     recordStateList.processMoney,
+                    recordStateList.processRmbMoney,
                     recordStateList.processTotal,
                 },
                 pay = new {
                     recordStateList.payList,
                     recordStateList.pay,
                     recordStateList.payMoney,
+                    recordStateList.payRmbMoney,
                     recordStateList.payTotal,
                 },
                 paid = new {
                     recordStateList.paidList,
                     recordStateList.paid,
                     recordStateList.paidMoney,
+                    recordStateList.paidRmbMoney,
                     recordStateList.paidTotal,
                 },
             };
@@ -159,7 +162,8 @@ namespace ACBC.Buss
                                         applyAddr,
                                         applyTime,
                                         userBankcard == null?"":userBankcard.bankcardId,
-                                        guid
+                                        guid,
+                                        Utils.GetExchange("韩元")
                                         );
             if(!ifUpdate)
             {

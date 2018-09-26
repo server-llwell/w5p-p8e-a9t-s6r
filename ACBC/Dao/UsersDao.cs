@@ -79,7 +79,7 @@ namespace ACBC.Dao
             builder.AppendFormat(UsersSqls.SELECT_USER_BY_OPENID, openID);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null && dt.Rows.Count > 0)
+            if (dt != null && dt.Rows.Count == 1)
             {
                 user = new User
                 {
@@ -178,6 +178,43 @@ namespace ACBC.Dao
 
             return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
         }
+
+        public Staff GetStaff(string openID)
+        {
+            Staff staff = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.SELECT_STAFF_BY_OPENID, openID);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                staff = new Staff
+                {
+                    staffName = dt.Rows[0]["STAFF_NAME"].ToString(),
+                    staffId = dt.Rows[0]["STAFF_ID"].ToString(),
+                    openid = dt.Rows[0]["OPENID"].ToString(),
+                    staffImg = dt.Rows[0]["STAFF_IMG"].ToString(),
+                    staffCode = dt.Rows[0]["STAFF_CODE"].ToString(),
+                };
+            }
+
+            return staff;
+        }
+
+        public bool StaffReg(StaffRegParam staffRegParam, string openID)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.UPDATE_STAFF_REG,
+                openID,
+                staffRegParam.nickName,
+                staffRegParam.avatarUrl,
+                staffRegParam.staffCode);
+            string sqlUpdate = builder.ToString();
+            
+            return DatabaseOperationWeb.ExecuteDML(sqlUpdate);
+        }
+
     }
 
     public class UsersSqls
@@ -218,6 +255,14 @@ namespace ACBC.Dao
             + "INSERT INTO T_BASE_USER"
             + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE,USER_TYPE) "
             + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}',{6})";
+        public const string UPDATE_STAFF_REG = ""
+            + "UPDATE T_BASE_STAFF "
+            + "SET OPENID = '{0}',"
+            + "STAFF_NAME = '{1}',"
+            + "STAFF_IMG = '{2}',"
+            + "IS_USE = 1 "
+            + "WHERE STAFF_CODE = '{3}' "
+            + "AND IS_USE = 0";
         public const string UPDATE_USER_REG_AGENT_CODE = ""
             + "UPDATE T_BUSS_AGENT_CODE "
             + "SET AGENT_STATE = AGENT_STATE - 1 "
@@ -226,6 +271,11 @@ namespace ACBC.Dao
             + "UPDATE T_BASE_USER "
             + "SET USER_PHONE = {1} "
             + "WHERE OPENID = '{0}'";
+        public const string SELECT_STAFF_BY_OPENID = ""
+            + "SELECT * "
+            + "FROM T_BASE_STAFF "
+            + "WHERE IS_USE = 1 "
+            + "AND OPENID = '{0}'";
     }
 
 

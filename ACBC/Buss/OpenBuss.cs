@@ -34,17 +34,19 @@ namespace ACBC.Buss
                 
                 UsersDao usersDao = new UsersDao();
                 var shopUser = usersDao.GetShopUser(jsonResult.openid);
-                if(shopUser != null)
+                SessionUser sessionUser = new SessionUser();
+                if (shopUser != null)
                 {
-                    SessionUser sessionUser = new SessionUser();
-                    sessionUser.openid = sessionBag.OpenId;
                     sessionUser.userType = "SHOP";
+                    sessionUser.openid = sessionBag.OpenId;
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
                     SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new { token = sessionBag.Key, isReg = true, shopUserName = shopUser.shopUserName, shopUserImg = shopUser.shopUserImg };
                 }
                 else
                 {
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new { token = sessionBag.Key, isReg = false };
                 }
                 
@@ -66,7 +68,7 @@ namespace ACBC.Buss
             var jsonResult = SnsApi.JsCode2Json(Global.USERAPPID, Global.USERAPPSECRET, loginParam.code);
             if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
             {
-                AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
+                AccessTokenContainer.Register(Global.USERAPPID, Global.USERAPPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
                 sessionBag.ExpireTime = DateTime.Now.AddSeconds(7200);
                 SessionContainer.Update(sessionBag.Key, sessionBag);
@@ -101,6 +103,45 @@ namespace ACBC.Buss
                         userImg = user.userImg,
                         userType = user.userType,
                     };
+                }
+                else
+                {
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    return new { token = sessionBag.Key, isReg = false };
+                }
+
+            }
+            else
+            {
+                throw new ApiException(CodeMessage.SenparcCode, jsonResult.errmsg);
+            }
+        }
+
+        public object Do_StaffLogin(BaseApi baseApi)
+        {
+            LoginParam loginParam = JsonConvert.DeserializeObject<LoginParam>(baseApi.param.ToString());
+            if (loginParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            var jsonResult = SnsApi.JsCode2Json(Global.STAFFAPPID, Global.STAFFAPPSECRET, loginParam.code);
+            if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
+            {
+                AccessTokenContainer.Register(Global.STAFFAPPID, Global.STAFFAPPSECRET);
+                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
+
+                UsersDao usersDao = new UsersDao();
+                Staff staff = usersDao.GetStaff(jsonResult.openid);
+                SessionUser sessionUser = new SessionUser();
+                if (staff != null)
+                {
+                    sessionUser.openid = sessionBag.OpenId;
+                    sessionUser.userType = "STAFF";
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    return new { token = sessionBag.Key, isReg = true, staffName = staff.staffName, staffImg = staff.staffImg };
                 }
                 else
                 {

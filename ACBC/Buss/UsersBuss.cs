@@ -220,7 +220,7 @@ namespace ACBC.Buss
 
             if (!usersDao.UserReg(userRegParam, openID, agentStr))
             {
-                throw new ApiException(CodeMessage.BindShopError, "BindShopError");
+                throw new ApiException(CodeMessage.RegUserError, "RegUserError");
             }
             sessionUser.openid = sessionBag.OpenId;
             switch(userRegParam.userType)
@@ -235,6 +235,41 @@ namespace ACBC.Buss
                     sessionUser.userType = "USER";
                     break;
             }
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+
+            SessionContainer.Update(sessionBag.Key, sessionBag);
+            return "";
+        }
+
+        public object Do_StaffReg(BaseApi baseApi)
+        {
+            StaffRegParam staffRegParam = JsonConvert.DeserializeObject<StaffRegParam>(baseApi.param.ToString());
+            if (staffRegParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            UsersDao usersDao = new UsersDao();
+            string openID = Utils.GetOpenID(baseApi.token);
+            var staff = usersDao.GetStaff(openID);
+            if (staff != null)
+            {
+                throw new ApiException(CodeMessage.StaffExist, "StaffExist");
+            }
+
+            if (!usersDao.StaffReg(staffRegParam, openID))
+            {
+                throw new ApiException(CodeMessage.RegStaffError, "RegStaffError");
+            }
+
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            if (sessionBag == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            sessionUser.openid = sessionBag.OpenId;
+            sessionUser.userType = "STAFF";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
 
             SessionContainer.Update(sessionBag.Key, sessionBag);

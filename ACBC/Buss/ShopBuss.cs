@@ -107,7 +107,7 @@ namespace ACBC.Buss
                 scanCode = user.scanCode,
                 userId = user.userId,
             };
-            Utils.SetCache(user.scanCode, wsPayState);
+            Utils.SetCache(user.scanCode, wsPayState, 0, 0, 10);
             return "";
         }
 

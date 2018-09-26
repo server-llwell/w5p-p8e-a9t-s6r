@@ -27,6 +27,19 @@ namespace ACBC.Buss
         public string scanCode;
     }
 
+    public class ExchangeRes
+    {
+        public string reason;
+        public ExchangeResult result;
+        public int error_code;
+    }
+    public class ExchangeResult
+    {
+        public string update;
+        public List<string[]> list;
+    }
+
+
     #endregion
 
     #region Params
@@ -61,6 +74,18 @@ namespace ACBC.Buss
         public string province;
         public string phone;
         public string userType;
+    }
+
+    public class StaffRegParam
+    {
+        public string staffCode;
+        public string avatarUrl;
+        public string city;
+        public string country;
+        public string gender;
+        public string language;
+        public string nickName;
+        public string province;
     }
 
     public class CheckSignatureParam
@@ -152,6 +177,15 @@ namespace ACBC.Buss
         public string scanCode;
     }
 
+    public class Staff
+    {
+        public string staffName;
+        public string staffId;
+        public string openid;
+        public string staffImg;
+        public string staffCode;
+    }
+
     public class ShopRecord
     {
         public string recordId;
@@ -225,6 +259,10 @@ namespace ACBC.Buss
         public double processMoney;
         public double payMoney;
         public double paidMoney;
+
+        public double processRmbMoney;
+        public double payRmbMoney;
+        public double paidRmbMoney;
 
         public double processTotal;
         public double payTotal;

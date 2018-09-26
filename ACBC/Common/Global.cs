@@ -16,6 +16,7 @@ namespace ACBC.Common
         public const int REDIS_EXPIRY = 7200;
 
         public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
+        public const string EXCHANGE_URL = "http://op.juhe.cn/onebox/exchange/query?key=08940f90d07501ace3f535e32968cf94";
 
         /// <summary>
         /// 基础业务处理类对象
@@ -58,6 +59,8 @@ namespace ACBC.Common
             }
         }
 
+        #region 小程序相关
+
         /// <summary>
         /// 小程序APPID
         /// </summary>
@@ -93,7 +96,7 @@ namespace ACBC.Common
         }
 
         /// <summary>
-        /// 小程序APPID
+        /// 代购及代理小程序APPID
         /// </summary>
         public static string USERAPPID
         {
@@ -110,7 +113,7 @@ namespace ACBC.Common
         }
 
         /// <summary>
-        /// 小程序APPSECRET
+        /// 代购及代理小程序APPSECRET
         /// </summary>
         public static string USERAPPSECRET
         {
@@ -125,6 +128,42 @@ namespace ACBC.Common
                 return appSecret;
             }
         }
+
+        /// <summary>
+        /// 平台员工小程序APPID
+        /// </summary>
+        public static string STAFFAPPID
+        {
+            get
+            {
+#if DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxStaffAppId", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appId = System.Environment.GetEnvironmentVariable("WxAppId");
+#endif
+                return appId;
+            }
+        }
+
+        /// <summary>
+        /// 平台员工小程序APPSECRET
+        /// </summary>
+        public static string STAFFAPPSECRET
+        {
+            get
+            {
+#if DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxStaffAppSecret", EnvironmentVariableTarget.User);
+#endif
+#if !DEBUG
+                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret");
+#endif
+                return appSecret;
+            }
+        }
+
+        #endregion
 
         #region OSS相关
 

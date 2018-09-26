@@ -47,11 +47,15 @@ namespace ACBC.Common
         InvalidAgentCode = 10303,
         PhoneExist = 10304,
         UpdatePhoneError = 10305,
+        RegUserError = 10306,
 
         InvalidShopInfo = 10401,
         UserNotExist = 10402,
         UpdateBankcardError = 10403,
         NeedBankcardFirst = 10404,
         ApplyRecordError = 10405,
+
+        StaffExist = 10501,
+        RegStaffError = 10502,
     }
 }

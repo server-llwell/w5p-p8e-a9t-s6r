@@ -14,6 +14,7 @@ namespace ACBC.Common
         UsersApi,//条件开放的用户API
         UserApi,//代购用户API
         ShopApi,//店铺用户API
+        StaffApi,//平台员工API
         UploadApi,//上传组件API
     }
 
@@ -158,4 +159,28 @@ namespace ACBC.Common
         }
 
     }
+
+    /// <summary>
+    /// 平台员工接口
+    /// </summary>
+    public class StaffApi : BaseApi
+    {
+
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Token;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.StaffApi;
+        }
+
+    }
+    
 }

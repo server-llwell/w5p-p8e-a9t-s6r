@@ -254,6 +254,9 @@ namespace ACBC.Dao
             double sumProcessMoney = 0;
             double sumPayMoney = 0;
             double sumPaidMoney = 0;
+            double sumProcessRmbMoney = 0;
+            double sumPayRmbMoney = 0;
+            double sumPaidRmbMoney = 0;
             double sumProcessTotal = 0;
             double sumPayTotal = 0;
             double sumPaidTotal = 0;
@@ -273,7 +276,10 @@ namespace ACBC.Dao
 
                     foreach (DataRow dr in drsProcess)
                     {
-                        sumProcessMoney += Convert.ToDouble(dr["USER_MONEY"]);
+                        sumProcessMoney += dr["USER_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_MONEY"]) : 0;
+                        sumProcessRmbMoney += dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_RMB_MONEY"]) : 0;
                         sumProcessTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -282,7 +288,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            "USER_RMB_MONEY" :
+                            "USER_MONEY")
+                            ]),
                             payType = dr["USER_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_PAY_TIME"].ToString(),
@@ -297,7 +307,10 @@ namespace ACBC.Dao
                     }
                     foreach (DataRow dr in drsPay)
                     {
-                        sumPayMoney += Convert.ToDouble(dr["USER_MONEY"]);
+                        sumPayMoney += dr["USER_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_MONEY"]) : 0;
+                        sumPayRmbMoney += dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_RMB_MONEY"]) : 0;
                         sumPayTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -306,7 +319,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            "USER_RMB_MONEY" :
+                            "USER_MONEY")
+                            ]),
                             payType = dr["USER_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_PAY_TIME"].ToString(),
@@ -321,7 +338,10 @@ namespace ACBC.Dao
                     }
                     foreach (DataRow dr in drsPaid)
                     {
-                        sumPaidMoney += Convert.ToDouble(dr["USER_MONEY"]);
+                        sumPaidMoney += dr["USER_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_MONEY"]) : 0;
+                        sumPaidRmbMoney += dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_RMB_MONEY"]) : 0;
                         sumPaidTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -330,7 +350,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_PAY_TYPE"].ToString() == "1" ?
+                            "USER_RMB_MONEY" :
+                            "USER_MONEY")
+                            ]),
                             payType = dr["USER_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_PAY_TIME"].ToString(),
@@ -351,6 +375,10 @@ namespace ACBC.Dao
                     recordStateList.processMoney = sumProcessMoney;
                     recordStateList.payMoney = sumPayMoney;
                     recordStateList.paidMoney = sumPaidMoney;
+
+                    recordStateList.processRmbMoney = sumProcessRmbMoney;
+                    recordStateList.payRmbMoney = sumPayRmbMoney;
+                    recordStateList.paidRmbMoney = sumPaidRmbMoney;
 
                     recordStateList.processTotal = sumProcessTotal;
                     recordStateList.payTotal = sumPayTotal;
@@ -374,7 +402,10 @@ namespace ACBC.Dao
 
                     foreach (DataRow dr in drsShopAgentProcess)
                     {
-                        sumProcessMoney += Convert.ToDouble(dr["SHOP_AGENT_MONEY"]);
+                        sumProcessMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_MONEY"]) : 0;
+                        sumProcessRmbMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_RMB_MONEY"]) : 0;
                         sumProcessTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -383,7 +414,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["SHOP_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "SHOP_AGENT_RMB_MONEY" :
+                            "SHOP_AGENT_MONEY")
+                            ]),
                             payType = dr["SHOP_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["SHOP_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
@@ -398,7 +433,10 @@ namespace ACBC.Dao
                     }
                     foreach (DataRow dr in drsUserAgentProcess)
                     {
-                        sumProcessMoney += Convert.ToDouble(dr["USER_AGENT_MONEY"]);
+                        sumProcessMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_AGENT_MONEY"]) : 0;
+                        sumProcessRmbMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_AGENT_RMB_MONEY"]) : 0;
                         sumProcessTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -407,7 +445,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "USER_AGENT_RMB_MONEY" :
+                            "USER_AGENT_MONEY")
+                            ]),
                             payType = dr["USER_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
@@ -423,7 +465,10 @@ namespace ACBC.Dao
 
                     foreach (DataRow dr in drsShopAgentPay)
                     {
-                        sumPayMoney += Convert.ToDouble(dr["SHOP_AGENT_MONEY"]);
+                        sumPayMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_MONEY"]) : 0;
+                        sumPayRmbMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_RMB_MONEY"]) : 0;
                         sumPayTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -432,7 +477,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["SHOP_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "SHOP_AGENT_RMB_MONEY" :
+                            "SHOP_AGENT_MONEY")
+                            ]),
                             payType = dr["SHOP_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["SHOP_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
@@ -447,7 +496,10 @@ namespace ACBC.Dao
                     }
                     foreach (DataRow dr in drsUserAgentPay)
                     {
-                        sumPayMoney += Convert.ToDouble(dr["USER_AGENT_MONEY"]);
+                        sumPayMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_AGENT_MONEY"]) : 0;
+                        sumPayRmbMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_AGENT_RMB_MONEY"]) : 0;
                         sumPayTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -456,7 +508,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "USER_AGENT_RMB_MONEY" :
+                            "USER_AGENT_MONEY")
+                            ]),
                             payType = dr["USER_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
@@ -472,7 +528,10 @@ namespace ACBC.Dao
 
                     foreach (DataRow dr in drsShopAgentPaid)
                     {
-                        sumPaidMoney += Convert.ToDouble(dr["SHOP_AGENT_MONEY"]);
+                        sumPaidMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_MONEY"]) : 0;
+                        sumPaidRmbMoney += dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["SHOP_AGENT_RMB_MONEY"]) : 0;
                         sumPaidTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -481,7 +540,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["SHOP_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["SHOP_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "SHOP_AGENT_RMB_MONEY" :
+                            "SHOP_AGENT_MONEY")
+                            ]),
                             payType = dr["SHOP_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["SHOP_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["SHOP_AGENT_PAY_TIME"].ToString(),
@@ -496,7 +559,10 @@ namespace ACBC.Dao
                     }
                     foreach (DataRow dr in drsUserAgentPaid)
                     {
-                        sumPaidMoney += Convert.ToDouble(dr["USER_AGENT_MONEY"]);
+                        sumPaidMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "0" ?
+                            Convert.ToDouble(dr["USER_AGENT_MONEY"]) : 0;
+                        sumPaidRmbMoney += dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            Convert.ToDouble(dr["USER_AGENT_RMB_MONEY"]) : 0;
                         sumPaidTotal += Convert.ToDouble(dr["TOTAL"]);
                         RecordState recordState = new RecordState
                         {
@@ -505,7 +571,11 @@ namespace ACBC.Dao
                             recordTime = dr["RECORD_TIME"].ToString(),
                             total = Convert.ToDouble(dr["TOTAL"]),
                             rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100) + "%",
-                            money = Convert.ToDouble(dr["USER_AGENT_MONEY"]),
+                            money = Convert.ToDouble(dr[
+                            (dr["USER_AGENT_PAY_TYPE"].ToString() == "1" ?
+                            "USER_AGENT_RMB_MONEY" :
+                            "USER_AGENT_MONEY")
+                            ]),
                             payType = dr["USER_AGENT_PAY_TYPE"].ToString(),
                             applyTime = dr["USER_AGENT_PAY_APPLY_TIME"].ToString(),
                             payTime = dr["USER_AGENT_PAY_TIME"].ToString(),
@@ -526,6 +596,10 @@ namespace ACBC.Dao
                     recordStateList.processMoney = sumProcessMoney;
                     recordStateList.payMoney = sumPayMoney;
                     recordStateList.paidMoney = sumPaidMoney;
+
+                    recordStateList.processRmbMoney = sumProcessRmbMoney;
+                    recordStateList.payRmbMoney = sumPayRmbMoney;
+                    recordStateList.paidRmbMoney = sumPaidRmbMoney;
 
                     recordStateList.processTotal = sumProcessTotal;
                     recordStateList.payTotal = sumPayTotal;
@@ -631,7 +705,8 @@ namespace ACBC.Dao
             string applyAddr, 
             string applyTime,
             string bankcardId,
-            string guid)
+            string guid,
+            double exRate)
         {
             StringBuilder builder = new StringBuilder();
             string sql;
@@ -645,7 +720,8 @@ namespace ACBC.Dao
                         applyTime,
                         applyAddr,
                         guid,
-                        payType
+                        payType,
+                        exRate
                     );
                     sql = builder.ToString();
                     list.Add(sql);
@@ -681,7 +757,8 @@ namespace ACBC.Dao
                         applyTime,
                         applyAddr,
                         guid,
-                        payType
+                        payType,
+                        exRate
                     );
                     sql = builder.ToString();
                     list.Add(sql);
@@ -692,7 +769,8 @@ namespace ACBC.Dao
                         applyTime,
                         applyAddr,
                         guid,
-                        payType
+                        payType,
+                        exRate
                     );
                     sql = builder.ToString();
                     list.Add(sql);
@@ -827,6 +905,7 @@ namespace ACBC.Dao
         public const string UPDATE_RECORD_USER_PAY_GUID = ""
             + "UPDATE T_BUSS_RECORD "
             + "SET USER_PAY_STATE = 1, "
+            + "USER_RMB_MONEY = FLOOR(USER_MONEY * {5}), "
             + "USER_PAY_TYPE = {4}, "
             + "USER_PAY_APPLY_TIME = NOW(), "
             + "USER_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
@@ -838,6 +917,7 @@ namespace ACBC.Dao
         public const string UPDATE_RECORD_SHOP_AGENT_PAY_GUID = ""
             + "UPDATE T_BUSS_RECORD "
             + "SET SHOP_AGENT_PAY_STATE = 1, "
+            + "SHOP_AGENT_RMB_MONEY = FLOOR(SHOP_AGENT_MONEY * {5}), "
             + "SHOP_AGENT_PAY_TYPE = {4}, "
             + "SHOP_AGENT_PAY_APPLY_TIME = NOW(), "
             + "SHOP_AGENT_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
@@ -849,6 +929,7 @@ namespace ACBC.Dao
         public const string UPDATE_RECORD_USER_AGENT_PAY_GUID = ""
             + "UPDATE T_BUSS_RECORD "
             + "SET USER_AGENT_PAY_STATE = 1, "
+            + "USER_AGENT_RMB_MONEY = FLOOR(USER_AGENT_MONEY * {5}), "
             + "USER_AGENT_PAY_TYPE = {4}, "
             + "USER_AGENT_PAY_APPLY_TIME = NOW(), "
             + "USER_AGENT_PAY_TIME = STR_TO_DATE('{1}', '%Y-%m-%d %H'), "
@@ -867,9 +948,9 @@ namespace ACBC.Dao
             + "'{3}',"
             + "1,"
             + "{4},"
-            + "(IFNULL((" + SELECT_RECORD_USER_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_SUM_BY_GUID + "),0)),"
+            + "(IFNULL((" + SELECT_RECORD_USER_RMB_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID
+            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID + "),0)),"
             + "0,"
             + "'{0}')";
         public const string INSERT_BUSS_PAY_GUID = ""
@@ -896,6 +977,18 @@ namespace ACBC.Dao
             + "WHERE SHOP_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_USER_AGENT_SUM_BY_GUID = ""
             + "SELECT SUM(USER_AGENT_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_AGENT_PAY_GUID = '{0}'";
+        public const string SELECT_RECORD_USER_RMB_SUM_BY_GUID = ""
+            + "SELECT SUM(USER_RMB_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_PAY_GUID = '{0}'";
+        public const string SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID = ""
+            + "SELECT SUM(SHOP_AGENT_RMB_MONEY) "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}'";
+        public const string SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID = ""
+            + "SELECT SUM(USER_AGENT_RMB_MONEY) "
             + "FROM T_BUSS_RECORD "
             + "WHERE USER_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_PAY_APPLY_BY_GUID = ""

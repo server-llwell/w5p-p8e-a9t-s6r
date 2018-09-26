@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ACBC.Buss;
+using Newtonsoft.Json;
 using Senparc.Weixin.Cache.Redis;
 using Senparc.Weixin.WxOpen.Containers;
 using StackExchange.Redis;
@@ -30,10 +31,10 @@ namespace ACBC.Common
             return sessionBag.OpenId;
         }
 
-        public static bool SetCache(string key, object value)
+        public static bool SetCache(string key, object value, int hours, int minutes, int seconds)
         {
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
-            var expiry = new TimeSpan(0, 0, 10);
+            var expiry = new TimeSpan(hours, minutes, seconds);
             string valueStr = JsonConvert.SerializeObject(value);
             return db.StringSet(key, valueStr, expiry);
         }
@@ -99,6 +100,37 @@ namespace ACBC.Common
             streamReader.Close();
 
             return responseContent;
+        }
+
+        public static double GetExchange(string name)
+        {
+            ExchangeRes exchangeRes = GetCache<ExchangeRes>("EXCHANGE");
+            if(exchangeRes == null)
+            {
+                string exchange = GetHttp(Global.EXCHANGE_URL);
+                exchangeRes = JsonConvert.DeserializeObject<ExchangeRes>(exchange);
+                SetCache("EXCHANGE", exchangeRes, 1, 0, 0);
+            }
+
+            double exRate = 0;
+            if (exchangeRes.error_code == 0)
+            {
+                var list = exchangeRes.result.list;
+                foreach (string[] item in list)
+                {
+                    foreach (string s in item)
+                    {
+                        if (s != name)
+                            break;
+                        exRate = Convert.ToDouble(item[3]);
+                        break;
+                    }
+                    if (exRate > 0)
+                        break;
+                }
+            }
+
+            return exRate / 100;
         }
     }
 }
