@@ -23,13 +23,16 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
             {
-                HomeImg homeImg = new HomeImg
+                foreach (DataRow dr in dt.Rows)
                 {
-                    homeImgId = dt.Rows[0]["HOME_IMG_ID"].ToString(),
-                    img = dt.Rows[0]["IMG"].ToString(),
-                    urlCode = dt.Rows[0]["URL_CODE"].ToString(),
-                };
-                list.Add(homeImg);
+                    HomeImg homeImg = new HomeImg
+                    {
+                        homeImgId = dr["HOME_IMG_ID"].ToString(),
+                        img = dr["IMG"].ToString(),
+                        urlCode = dr["URL_CODE"].ToString(),
+                    };
+                    list.Add(homeImg);
+                }   
             }
 
             return list;
