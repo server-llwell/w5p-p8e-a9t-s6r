@@ -214,15 +214,15 @@ namespace ACBC.Dao
                     sql = builder.ToString();
                     dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
 
-                    DataRow[] drsShopAgentProcess = dt.Select("PAY_STATE = 0 AND SHOP_AGENT_PAY_STATE = 0");
-                    DataRow[] drsShopAgentPayApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 1");
-                    DataRow[] drsShopAgentPaid = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 2");
-                    DataRow[] drsShopAgentPayNotApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 0");
+                    DataRow[] drsShopAgentProcess = dt.Select("PAY_STATE = 0 AND SHOP_AGENT_PAY_STATE = 0 AND SHOP_AGENT = " + userId);
+                    DataRow[] drsShopAgentPayApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 1 AND SHOP_AGENT = " + userId);
+                    DataRow[] drsShopAgentPaid = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 2 AND SHOP_AGENT = " + userId);
+                    DataRow[] drsShopAgentPayNotApply = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 0 AND SHOP_AGENT = " + userId);
 
-                    DataRow[] drsUserAgentProcess = dt.Select("PAY_STATE = 0 AND USER_AGENT_PAY_STATE = 0");
-                    DataRow[] drsUserAgentPayApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 1");
-                    DataRow[] drsUserAgentPaid = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 2");
-                    DataRow[] drsUserAgentPayNotApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 0");
+                    DataRow[] drsUserAgentProcess = dt.Select("PAY_STATE = 0 AND USER_AGENT_PAY_STATE = 0 AND USER_AGENT = " + userId);
+                    DataRow[] drsUserAgentPayApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 1 AND USER_AGENT = " + userId);
+                    DataRow[] drsUserAgentPaid = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 2 AND USER_AGENT = " + userId);
+                    DataRow[] drsUserAgentPayNotApply = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 0 AND USER_AGENT = " + userId);
 
                     foreach (DataRow dr in drsShopAgentPayNotApply)
                     {
@@ -392,13 +392,13 @@ namespace ACBC.Dao
                     sql = builder.ToString();
                     dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
 
-                    DataRow[] drsShopAgentProcess = dt.Select("PAY_STATE = 0 AND SHOP_AGENT_PAY_STATE = 0");
-                    DataRow[] drsShopAgentPay = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE IN (0,1)");
-                    DataRow[] drsShopAgentPaid = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 2");
+                    DataRow[] drsShopAgentProcess = dt.Select("PAY_STATE = 0 AND SHOP_AGENT_PAY_STATE = 0 AND SHOP_AGENT = " + userId);
+                    DataRow[] drsShopAgentPay = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE IN (0,1) AND SHOP_AGENT = " + userId);
+                    DataRow[] drsShopAgentPaid = dt.Select("PAY_STATE = 1 AND SHOP_AGENT_PAY_STATE = 2 AND SHOP_AGENT = " + userId);
 
-                    DataRow[] drsUserAgentProcess = dt.Select("PAY_STATE = 0 AND USER_AGENT_PAY_STATE = 0");
-                    DataRow[] drsUserAgentPay = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE IN (0,1)");
-                    DataRow[] drsUserAgentPaid = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 2");
+                    DataRow[] drsUserAgentProcess = dt.Select("PAY_STATE = 0 AND USER_AGENT_PAY_STATE = 0 AND USER_AGENT = " + userId);
+                    DataRow[] drsUserAgentPay = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE IN (0,1) AND USER_AGENT = " + userId);
+                    DataRow[] drsUserAgentPaid = dt.Select("PAY_STATE = 1 AND USER_AGENT_PAY_STATE = 2 AND USER_AGENT = " + userId);
 
                     foreach (DataRow dr in drsShopAgentProcess)
                     {
