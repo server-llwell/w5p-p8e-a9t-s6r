@@ -140,7 +140,7 @@ namespace ACBC.Common
                 var appId = System.Environment.GetEnvironmentVariable("WxStaffAppId", EnvironmentVariableTarget.User);
 #endif
 #if !DEBUG
-                var appId = System.Environment.GetEnvironmentVariable("WxAppId");
+                var appId = System.Environment.GetEnvironmentVariable("WxStaffAppId");
 #endif
                 return appId;
             }
@@ -157,7 +157,7 @@ namespace ACBC.Common
                 var appSecret = System.Environment.GetEnvironmentVariable("WxStaffAppSecret", EnvironmentVariableTarget.User);
 #endif
 #if !DEBUG
-                var appSecret = System.Environment.GetEnvironmentVariable("WxAppSecret");
+                var appSecret = System.Environment.GetEnvironmentVariable("WxStaffAppSecret");
 #endif
                 return appSecret;
             }
