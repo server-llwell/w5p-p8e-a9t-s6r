@@ -39,6 +39,12 @@ namespace ACBC.Buss
         public List<string[]> list;
     }
 
+    public enum ScanCodeType
+    {
+        Shop,
+        User,
+        Null,
+    }
 
     #endregion
 
@@ -148,6 +154,26 @@ namespace ACBC.Buss
     {
         public string phone;
         public string checkCode;
+    }
+
+    public class GetPayRecordParam
+    {
+        public string shopId;
+    }
+
+    public class GetPaidRecordParam
+    {
+        public string guid;
+    }
+
+    public class ScanTheCodeParam
+    {
+        public string scanCode;
+    }
+
+    public class ShopPayParam
+    {
+        public string shopId;
     }
 
     #endregion
@@ -319,6 +345,34 @@ namespace ACBC.Buss
         public string payTime;
     }
 
+    public class RecordShopPaySum
+    {
+        public string shopId;
+        public string shopName;
+        public int num;
+        public double sumTotal;
+        public double sumShopMoney;
+        public string shopRate;
+        public string gatherTime;
+        public string guid;
+    }
+
+    public class RecordShopPayItem
+    {
+        public string recordTime;
+        public double total;
+        public string shopRate;
+        public double shopMoney;
+    }
+
+    public class ScanCodeResult
+    {
+        public string resultType;
+        public string resultKey;
+        public string resultTitle;
+        public double resultMoney;
+        public string resultUser;
+    }
 
     #endregion
 }

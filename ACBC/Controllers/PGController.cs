@@ -47,6 +47,15 @@ namespace ACBC.Controllers
             return Json(Global.BUSS.BussResults(this, userApi));
         }
 
+
+        [HttpPost]
+        public ActionResult Staff([FromBody]StaffApi staffApi)
+        {
+            if (staffApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, staffApi));
+        }
+
         [HttpPost]
         public ActionResult Upload(IFormCollection param)
         {
