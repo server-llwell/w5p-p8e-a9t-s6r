@@ -57,5 +57,6 @@ namespace ACBC.Common
 
         StaffExist = 10501,
         RegStaffError = 10502,
+        InvalidStaffCode = 10503,
     }
 }

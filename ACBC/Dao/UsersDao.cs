@@ -202,6 +202,29 @@ namespace ACBC.Dao
             return staff;
         }
 
+        public Staff GetStaffByCode(string code)
+        {
+            Staff staff = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(UsersSqls.SELECT_STAFF_BY_CODE, code);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                staff = new Staff
+                {
+                    staffName = dt.Rows[0]["STAFF_NAME"].ToString(),
+                    staffId = dt.Rows[0]["STAFF_ID"].ToString(),
+                    openid = dt.Rows[0]["OPENID"].ToString(),
+                    staffImg = dt.Rows[0]["STAFF_IMG"].ToString(),
+                    staffCode = dt.Rows[0]["STAFF_CODE"].ToString(),
+                };
+            }
+
+            return staff;
+        }
+
         public bool StaffReg(StaffRegParam staffRegParam, string openID)
         {
             StringBuilder builder = new StringBuilder();
@@ -276,6 +299,11 @@ namespace ACBC.Dao
             + "FROM T_BASE_STAFF "
             + "WHERE IS_USE = 1 "
             + "AND OPENID = '{0}'";
+        public const string SELECT_STAFF_BY_CODE = ""
+            + "SELECT * "
+            + "FROM T_BASE_STAFF "
+            + "WHERE IS_USE = 0 "
+            + "AND STAFF_CODE = '{0}'";
     }
 
 

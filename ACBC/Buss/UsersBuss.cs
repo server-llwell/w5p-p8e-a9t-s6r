@@ -256,7 +256,11 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.StaffExist, "StaffExist");
             }
-
+            staff = usersDao.GetStaffByCode(staffRegParam.staffCode);
+            if (staff == null)
+            {
+                throw new ApiException(CodeMessage.InvalidStaffCode, "InvalidStaffCode");
+            }
             if (!usersDao.StaffReg(staffRegParam, openID))
             {
                 throw new ApiException(CodeMessage.RegStaffError, "RegStaffError");
