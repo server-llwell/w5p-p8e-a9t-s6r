@@ -174,6 +174,8 @@ namespace ACBC.Buss
     public class ShopPayParam
     {
         public string shopId;
+        public string shopUserId;
+        public string staffId;
     }
 
     #endregion

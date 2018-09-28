@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace ACBC.Dao
                         num = Convert.ToInt32(dr["RECORD_COUNT"]),
                         sumTotal = Convert.ToDouble(dr["TOTAL"]),
                         sumShopMoney = Convert.ToDouble(dr["SHOP_MONEY"]),
-                        shopRate = (Convert.ToDouble(dr["SHOP_RATE"]) * 100).ToString() + "%",
+                        shopRate = dr["SHOP_RATE"].ToString(),
                         gatherTime = dr["GATHER_TIME"].ToString(),
                         guid = dr["GUID"].ToString(),
                     };
@@ -171,10 +172,54 @@ namespace ACBC.Dao
             return scanCodeResult;
         }
 
-        //public bool ShopPay(string shopId)
-        //{
+        public bool ShopPay(string shopId, string shopUserId, string staffId)
+        {
+            string guid = Guid.NewGuid().ToString();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.UPDATE_RECORD_SHOP_PAY_BY_SHOP_ID, shopId, guid);
+            string updateSql = builder.ToString();
+            if(!DatabaseOperationWeb.ExecuteDML(updateSql))
+            {
+                return false;
+            }
 
-        //}
+            List<RecordShopPayItem> paidList = GetRecordShopPayItemListByGuid(guid);
+
+            if(paidList.Count == 0)
+            {
+                return false;
+            }
+
+            int paidCount = 0;
+            double paidSumTotal = 0;
+            double paidSumMoney = 0;
+            string shopRate = "";
+            foreach (RecordShopPayItem recordShopPayItem in paidList)
+            {
+                paidCount++;
+                paidSumTotal += recordShopPayItem.total;
+                paidSumMoney += recordShopPayItem.shopMoney;
+                shopRate = recordShopPayItem.shopRate;
+            }
+
+            builder.Clear();
+            builder.AppendFormat(
+                StaffSqls.INSERT_GATHER, 
+                shopId,
+                shopUserId,
+                staffId,
+                paidSumMoney,
+                shopRate,
+                paidSumTotal,
+                guid,
+                paidCount);
+            string insertSql = builder.ToString();
+            if (!DatabaseOperationWeb.ExecuteDML(insertSql))
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     public class StaffSqls
@@ -210,7 +255,7 @@ namespace ACBC.Dao
         public const string SELECT_GATHER_LIST_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
-            + "WHERE SHOP_GATHER_GUID = {0} ";
+            + "WHERE SHOP_GATHER_GUID = '{0}' ";
         public const string SELECT_RECORD_SHOP_BY_SHOP_CODE = ""
             + "SELECT A.SHOP_ID,A.SHOP_NAME_ZH AS SHOP_NAME,B.SHOP_USER_ID,SUM(SHOP_MONEY) AS SUM_SHOP_MONEY "
             + "FROM T_BUSS_RECORD T, T_BASE_SHOP A, T_BASE_SHOP_USER B "
@@ -219,5 +264,24 @@ namespace ACBC.Dao
             + "AND T.SHOP_ID = B.SHOP_ID "
             + "AND B.SHOP_CODE = {0} "
             + "GROUP BY A.SHOP_ID,A.SHOP_NAME_ZH,B.SHOP_USER_ID ";
+        public const string UPDATE_RECORD_SHOP_PAY_BY_SHOP_ID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET SHOP_PAY_TIME = NOW(), "
+            + "PAY_STATE = 1, "
+            + "SHOP_GATHER_GUID = '{1}' "
+            + "WHERE SHOP_ID = {0} "
+            + "AND PAY_STATE = 0";
+        public const string INSERT_GATHER = ""
+            + "INSERT INTO T_BUSS_GATHER "
+            + "(GATHER_TIME,"
+            + "SHOP_ID,"
+            + "SHOP_USER_ID,"
+            + "STAFF_ID,"
+            + "SHOP_MONEY,"
+            + "SHOP_RATE,"
+            + "TOTAL,"
+            + "GUID,"
+            + "RECORD_COUNT) "
+            + "VALUES(NOW(),{0},{1},{2},{3},'{4}',{5},'{6}',{7}) ";
     }
 }

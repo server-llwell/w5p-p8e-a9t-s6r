@@ -146,10 +146,10 @@ namespace ACBC.Buss
 
             StaffDao staffDao = new StaffDao();
 
-            //if(!staffDao.ShopPay(shopPayParam.shopId))
-            //{
-            //    throw new ApiException(CodeMessage.ShopPayError, "ShopPayError");
-            //}
+            if (!staffDao.ShopPay(shopPayParam.shopId, shopPayParam.shopUserId, shopPayParam.staffId))
+            {
+                throw new ApiException(CodeMessage.ShopPayError, "ShopPayError");
+            }
 
             return "";
         }
