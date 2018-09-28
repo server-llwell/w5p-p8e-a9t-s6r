@@ -244,7 +244,7 @@ namespace ACBC.Dao
         {
             List<PayItem> list = new List<PayItem>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "0");
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "0", "0");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -274,7 +274,7 @@ namespace ACBC.Dao
         {
             List<PayItem> list = new List<PayItem>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "1");
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "1", "0");
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -370,7 +370,8 @@ namespace ACBC.Dao
             + "SELECT * "
             + "FROM T_BUSS_PAY T, T_BASE_USER A "
             + "WHERE A.USER_ID = {0} "
-            + "AND PAY_TYPE = {1} "
+            + "AND PAY_TYPE = {2} "
+            + "AND PAY_STATE = {1} "
             + "AND T.USER_ID = A.USER_ID ";
     }
 }
