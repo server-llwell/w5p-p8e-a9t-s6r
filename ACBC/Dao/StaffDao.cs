@@ -239,6 +239,66 @@ namespace ACBC.Dao
             }
             return true;
         }
+
+        public List<PayItem> GetApplyListByUserId(string userId)
+        {
+            List<PayItem> list = new List<PayItem>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "0");
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach(DataRow dr in dt.Rows)
+                {
+                    PayItem payItem = new PayItem
+                    {
+                        payName = dr["USER_NAME"].ToString() + " " + dr["USER_PHONE"].ToString(),
+                        count = Convert.ToInt32(dr["COUNT"]),
+                        money = Convert.ToDouble(dr["MONEY"]),
+                        total = Convert.ToDouble(dr["TOTAL"]),
+                        applyTime = dr["APPLY_TIME"].ToString(),
+                        payTime = dr["PAY_TIME"].ToString(),
+                        addr = dr["ADDR"].ToString(),
+                        guid = dr["GUID"].ToString(),
+                    };
+                    list.Add(payItem);
+                }
+                
+            }
+
+            return list;
+        }
+
+        public List<PayItem> GetPayListByUserId(string userId)
+        {
+            List<PayItem> list = new List<PayItem>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "1");
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    PayItem payItem = new PayItem
+                    {
+                        payName = dr["USER_NAME"].ToString() + " " + dr["USER_PHONE"].ToString(),
+                        count = Convert.ToInt32(dr["COUNT"]),
+                        money = Convert.ToDouble(dr["MONEY"]),
+                        total = Convert.ToDouble(dr["TOTAL"]),
+                        applyTime = dr["APPLY_TIME"].ToString(),
+                        payTime = dr["PAY_TIME"].ToString(),
+                        addr = dr["ADDR"].ToString(),
+                        guid = dr["GUID"].ToString(),
+                    };
+                    list.Add(payItem);
+                }
+
+            }
+
+            return list;
+        }
     }
 
     public class StaffSqls
@@ -306,5 +366,11 @@ namespace ACBC.Dao
             + "GUID,"
             + "RECORD_COUNT) "
             + "VALUES(NOW(),{0},{1},{2},{3},'{4}',{5},'{6}',{7}) ";
+        public const string SELECT_APPLY_LIST_BY_USER_ID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_PAY T, T_BASE_USER A "
+            + "WHERE A.USER_ID = {0} "
+            + "AND PAY_TYPE = {1} "
+            + "AND T.USER_ID = A.USER_ID ";
     }
 }

@@ -698,6 +698,90 @@ namespace ACBC.Dao
             return keyValues;
         }
         
+        private PaySumCount getPaySum(string guid)
+        {
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            builder.AppendFormat(UserSqls.SELECT_RECORD_USER_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUser = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(UserSqls.SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtShopAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(UserSqls.SELECT_RECORD_USER_AGENT_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUserAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+
+            PaySumCount paySumCount = new PaySumCount();
+            paySumCount.count = 0;
+            paySumCount.money = 0;
+            paySumCount.total = 0;
+            foreach (DataRow dr in dtUser.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+            foreach (DataRow dr in dtShopAgent.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+            foreach (DataRow dr in dtUserAgent.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+
+            return paySumCount;
+        }
+
+        private PaySumCount getBunkcardPaySum(string guid)
+        {
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            builder.AppendFormat(UserSqls.SELECT_RECORD_USER_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUser = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(UserSqls.SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtShopAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(UserSqls.SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUserAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+
+            PaySumCount paySumCount = new PaySumCount();
+            paySumCount.count = 0;
+            paySumCount.money = 0;
+            paySumCount.total = 0;
+            foreach (DataRow dr in dtUser.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+            foreach (DataRow dr in dtShopAgent.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+            foreach (DataRow dr in dtUserAgent.Rows)
+            {
+                paySumCount.count += Convert.ToInt32(dr["NUM"]);
+                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+            }
+
+            return paySumCount;
+        }
+
         public bool UpdateUserApply(
             string userId, 
             string userType, 
@@ -728,23 +812,31 @@ namespace ACBC.Dao
                     builder.Clear();
                     if (payType == "0")
                     {
+                        PaySumCount paySumCount = getPaySum(guid);
                         builder.AppendFormat(
                             UserSqls.INSERT_BUSS_PAY_GUID,
                             guid,
                             applyTime,
                             userId,
-                            applyAddr
+                            applyAddr,
+                            paySumCount.count,
+                            paySumCount.money,
+                            paySumCount.total
                         );
                     }
                     else
                     {
+                        PaySumCount paySumCount = getBunkcardPaySum(guid);
                         builder.AppendFormat(
                             UserSqls.INSERT_BUSS_BANKCARD_PAY_GUID,
                             guid,
                             applyTime,
                             userId,
                             applyAddr,
-                            bankcardId
+                            bankcardId,
+                            paySumCount.count,
+                            paySumCount.money,
+                            paySumCount.total
                          );
                     }
                     sql = builder.ToString();
@@ -777,23 +869,31 @@ namespace ACBC.Dao
                     builder.Clear();
                     if (payType == "0")
                     {
+                        PaySumCount paySumCount = getPaySum(guid);
                         builder.AppendFormat(
                             UserSqls.INSERT_BUSS_PAY_GUID,
                             guid,
                             applyTime,
                             userId,
-                            applyAddr
+                            applyAddr,
+                            paySumCount.count,
+                            paySumCount.money,
+                            paySumCount.total
                         );
                     }
                     else
                     {
+                        PaySumCount paySumCount = getBunkcardPaySum(guid);
                         builder.AppendFormat(
                             UserSqls.INSERT_BUSS_BANKCARD_PAY_GUID,
                             guid,
                             applyTime,
                             userId,
                             applyAddr,
-                            bankcardId
+                            bankcardId,
+                            paySumCount.count,
+                            paySumCount.money,
+                            paySumCount.total
                          );
                     }
                     sql = builder.ToString();
@@ -940,7 +1040,7 @@ namespace ACBC.Dao
             + "AND USER_ID IN(SELECT USER_ID FROM T_BASE_USER WHERE USER_AGENT = {0}) ";
         public const string INSERT_BUSS_BANKCARD_PAY_GUID = ""
             + "INSERT INTO T_BUSS_PAY "
-            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,PAY_BANKCARD_ID,MONEY,PAY_STATE,GUID) "
+            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,PAY_BANKCARD_ID,COUNT,MONEY,TOTAL,PAY_STATE,GUID) "
             + "VALUES("
             + "STR_TO_DATE('{1}', '%Y-%m-%d %H'),"
             + "NOW(),"
@@ -948,47 +1048,47 @@ namespace ACBC.Dao
             + "'{3}',"
             + "1,"
             + "{4},"
-            + "(IFNULL((" + SELECT_RECORD_USER_RMB_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID + "),0)),"
+            + "{5},"
+            + "{6},"
+            + "{7},"
             + "0,"
             + "'{0}')";
         public const string INSERT_BUSS_PAY_GUID = ""
             + "INSERT INTO T_BUSS_PAY "
-            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,MONEY,PAY_STATE,GUID) "
+            + "(PAY_TIME,APPLY_TIME,USER_ID,ADDR,PAY_TYPE,COUNT,MONEY,TOTAL,PAY_STATE,GUID) "
             + "VALUES("
             + "STR_TO_DATE('{1}', '%Y-%m-%d %H'),"
             + "NOW(),"
             + "{2},"
             + "'{3}',"
             + "0,"
-            + "(IFNULL((" + SELECT_RECORD_USER_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID
-            + "),0)+IFNULL((" + SELECT_RECORD_USER_AGENT_SUM_BY_GUID + "),0)),"
+            + "{4},"
+            + "{5},"
+            + "{6},"
             + "0,"
             + "'{0}')";
         public const string SELECT_RECORD_USER_SUM_BY_GUID = ""
-            + "SELECT SUM(USER_MONEY) "
+            + "SELECT SUM(USER_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE USER_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID = ""
-            + "SELECT SUM(SHOP_AGENT_MONEY) "
+            + "SELECT SUM(SHOP_AGENT_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE SHOP_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_USER_AGENT_SUM_BY_GUID = ""
-            + "SELECT SUM(USER_AGENT_MONEY) "
+            + "SELECT SUM(USER_AGENT_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE USER_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_USER_RMB_SUM_BY_GUID = ""
-            + "SELECT SUM(USER_RMB_MONEY) "
+            + "SELECT SUM(USER_RMB_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE USER_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID = ""
-            + "SELECT SUM(SHOP_AGENT_RMB_MONEY) "
+            + "SELECT SUM(SHOP_AGENT_RMB_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE SHOP_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID = ""
-            + "SELECT SUM(USER_AGENT_RMB_MONEY) "
+            + "SELECT SUM(USER_AGENT_RMB_MONEY) AS MONEY,COUNT(*) AS NUM,SUM(TOTAL) AS TOTAL "
             + "FROM T_BUSS_RECORD "
             + "WHERE USER_AGENT_PAY_GUID = '{0}'";
         public const string SELECT_PAY_APPLY_BY_GUID = ""

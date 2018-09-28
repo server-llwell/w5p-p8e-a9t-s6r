@@ -177,6 +177,11 @@ namespace ACBC.Buss
         public string shopUserId;
     }
 
+    public class GetApplyListParam
+    {
+        public string userId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -346,6 +351,13 @@ namespace ACBC.Buss
         public string payTime;
     }
 
+    public class PaySumCount
+    {
+        public int count;
+        public double total;
+        public double money;
+    }
+
     public class RecordShopPaySum
     {
         public string shopId;
@@ -373,6 +385,18 @@ namespace ACBC.Buss
         public string resultTitle;
         public double resultMoney;
         public string resultUser;
+    }
+
+    public class PayItem
+    {
+        public string payName;
+        public int count;
+        public double total;
+        public double money;
+        public string applyTime;
+        public string payTime;
+        public string addr;
+        public string guid;
     }
 
     #endregion

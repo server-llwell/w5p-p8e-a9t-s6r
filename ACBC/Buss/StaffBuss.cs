@@ -160,5 +160,45 @@ namespace ACBC.Buss
 
             return "";
         }
+
+        public object Do_GetApplyList(BaseApi baseApi)
+        {
+            GetApplyListParam getApplyListParam = JsonConvert.DeserializeObject<GetApplyListParam>(baseApi.param.ToString());
+            if (getApplyListParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            StaffDao staffDao = new StaffDao();
+            List<PayItem> applyList = staffDao.GetApplyListByUserId(getApplyListParam.userId);
+            List<PayItem> payList = staffDao.GetPayListByUserId(getApplyListParam.userId);
+
+            int applyCount = 0;
+            double applyMoney = 0;
+            double applyTotal = 0;
+
+            int payCount = 0;
+            double payMoney = 0;
+            double payTotal = 0;
+
+            foreach (PayItem payItem in applyList)
+            {
+                applyCount += payItem.count;
+                applyMoney += payItem.money;
+                applyTotal += payItem.total;
+            }
+
+            foreach (PayItem payItem in payList)
+            {
+                payCount += payItem.count;
+                payMoney += payItem.money;
+                payTotal += payItem.total;
+            }
+
+            return new
+            {
+                apply = new { applyCount, applyMoney, applyTotal, applyList },
+                pay = new { payCount, payMoney, payTotal, payList }
+            };
+        }
     }
 }
