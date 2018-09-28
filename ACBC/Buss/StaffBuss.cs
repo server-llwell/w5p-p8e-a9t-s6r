@@ -132,7 +132,10 @@ namespace ACBC.Buss
         {
             StaffDao staffDao = new StaffDao();
             ScanCodeResult scanCodeResult = staffDao.GetShopPayInfo(scanCode);
-
+            if(scanCodeResult == null)
+            {
+                throw new ApiException(CodeMessage.ScanCodeNoData, "ScanCodeNoData");
+            }
             return scanCodeResult;
         }
 

@@ -59,6 +59,7 @@ namespace ACBC.Common
         RegStaffError = 10502,
         InvalidStaffCode = 10503,
 
-        ShopPayError = 10601,
+        ScanCodeNoData = 10601,
+        ShopPayError = 10602,
     }
 }
