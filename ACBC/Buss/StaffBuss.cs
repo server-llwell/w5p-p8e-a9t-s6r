@@ -148,8 +148,12 @@ namespace ACBC.Buss
             }
 
             StaffDao staffDao = new StaffDao();
-
-            if (!staffDao.ShopPay(shopPayParam.shopId, shopPayParam.shopUserId, shopPayParam.staffId))
+            Staff staff = staffDao.GetStaffByOpenID(Utils.GetOpenID(baseApi.token));
+            if(staff == null)
+            {
+                throw new ApiException(CodeMessage.StaffNotExist, "StaffNotExist");
+            }
+            if (!staffDao.ShopPay(shopPayParam.shopId, shopPayParam.shopUserId, staff.staffId))
             {
                 throw new ApiException(CodeMessage.ShopPayError, "ShopPayError");
             }

@@ -172,6 +172,25 @@ namespace ACBC.Dao
             return scanCodeResult;
         }
 
+        public Staff GetStaffByOpenID(string openId)
+        {
+            Staff staff = null;
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_STAFF_BY_OPENID, openId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                staff = new Staff
+                {
+                    staffId = dt.Rows[0]["STAFF_ID"].ToString(),
+                };
+            }
+
+            return staff;
+        }
+
         public bool ShopPay(string shopId, string shopUserId, string staffId)
         {
             string guid = Guid.NewGuid().ToString();
@@ -232,6 +251,10 @@ namespace ACBC.Dao
            + "SELECT SCAN_CODE "
            + "FROM T_BASE_USER "
            + "WHERE SCAN_CODE = '{0}'";
+        public const string SELECT_STAFF_BY_OPENID = ""
+            + "SELECT * "
+            + "FROM T_BASE_STAFF "
+            + "WHERE OPENID = '{0}'";
         public const string SELECT_RECORD_SHOP_BY_PAY_STATE = ""
             + "SELECT A.SHOP_ID,A.SHOP_NAME_ZH AS SHOP_NAME, "
             + "A.SHOP_RATE, COUNT(*) AS NUM, "

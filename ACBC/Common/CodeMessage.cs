@@ -61,5 +61,6 @@ namespace ACBC.Common
 
         ScanCodeNoData = 10601,
         ShopPayError = 10602,
+        StaffNotExist = 10603,
     }
 }

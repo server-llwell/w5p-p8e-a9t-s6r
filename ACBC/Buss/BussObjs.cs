@@ -175,7 +175,6 @@ namespace ACBC.Buss
     {
         public string shopId;
         public string shopUserId;
-        public string staffId;
     }
 
     #endregion
