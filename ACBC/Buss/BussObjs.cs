@@ -180,6 +180,13 @@ namespace ACBC.Buss
     public class GetApplyListParam
     {
         public string userId;
+        public string payType;
+    }
+
+    public class GetUserPayRecordListParam
+    {
+        public string guid;
+        public string payType;
     }
 
     #endregion
@@ -378,6 +385,14 @@ namespace ACBC.Buss
         public double shopMoney;
     }
 
+    public class RecordUserPayItem
+    {
+        public string recordTime;
+        public double total;
+        public string rate;
+        public double money;
+    }
+
     public class ScanCodeResult
     {
         public string resultType;
@@ -397,6 +412,35 @@ namespace ACBC.Buss
         public string payTime;
         public string addr;
         public string guid;
+        public string payImg;
+    }
+
+    public class PayInfo
+    {
+        public string userName;
+        public string addr;
+        public string applyTime;
+        public string payTime;
+        public double total;
+        public double money;
+        public int count;
+        public List<RecordUserPayItem> list;
+    }
+
+    public class BankcardInfo
+    {
+        public string userName;
+        public string applyTime;
+        public string payTime;
+        public double total;
+        public double money;
+        public int count;
+        public string bankcardCode;
+        public string bankName;
+        public string bankcardUserName;
+        public string subName;
+        public string payImg;
+        public List<RecordUserPayItem> list;
     }
 
     #endregion

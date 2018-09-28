@@ -118,7 +118,7 @@ namespace ACBC.Buss
             switch(scanCodeType)
             {
                 case ScanCodeType.User:
-                    return "USER";
+                    return GetUserPayInfo(scanTheCodeParam.scanCode);
                 case ScanCodeType.Shop:
                     return GetShopPayInfo(scanTheCodeParam.scanCode);
                 case ScanCodeType.Null:
@@ -133,6 +133,17 @@ namespace ACBC.Buss
             StaffDao staffDao = new StaffDao();
             ScanCodeResult scanCodeResult = staffDao.GetShopPayInfo(scanCode);
             if(scanCodeResult == null)
+            {
+                throw new ApiException(CodeMessage.ScanCodeNoData, "ScanCodeNoData");
+            }
+            return scanCodeResult;
+        }
+
+        private object GetUserPayInfo(string scanCode)
+        {
+            StaffDao staffDao = new StaffDao();
+            ScanCodeResult scanCodeResult = staffDao.GetUserPayInfo(scanCode);
+            if (scanCodeResult == null)
             {
                 throw new ApiException(CodeMessage.ScanCodeNoData, "ScanCodeNoData");
             }
@@ -161,7 +172,7 @@ namespace ACBC.Buss
             return "";
         }
 
-        public object Do_GetApplyList(BaseApi baseApi)
+        public object Do_GetPayList(BaseApi baseApi)
         {
             GetApplyListParam getApplyListParam = JsonConvert.DeserializeObject<GetApplyListParam>(baseApi.param.ToString());
             if (getApplyListParam == null)
@@ -169,36 +180,95 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
             StaffDao staffDao = new StaffDao();
-            List<PayItem> applyList = staffDao.GetApplyListByUserId(getApplyListParam.userId);
-            List<PayItem> payList = staffDao.GetPayListByUserId(getApplyListParam.userId);
-
+            List<PayItem> applyList;
             int applyCount = 0;
             double applyMoney = 0;
             double applyTotal = 0;
-
+            List<PayItem> payList;
             int payCount = 0;
             double payMoney = 0;
             double payTotal = 0;
-
-            foreach (PayItem payItem in applyList)
+            switch (getApplyListParam.payType)
             {
-                applyCount += payItem.count;
-                applyMoney += payItem.money;
-                applyTotal += payItem.total;
+                case "0":
+                    applyList = staffDao.GetPayList(getApplyListParam.userId, "0", getApplyListParam.payType);
+                    payList = staffDao.GetPayList(getApplyListParam.userId, "1", getApplyListParam.payType);
+
+                    foreach (PayItem payItem in applyList)
+                    {
+                        applyCount += payItem.count;
+                        applyMoney += payItem.money;
+                        applyTotal += payItem.total;
+                    }
+
+                    foreach (PayItem payItem in payList)
+                    {
+                        payCount += payItem.count;
+                        payMoney += payItem.money;
+                        payTotal += payItem.total;
+                    }
+
+                    return new
+                    {
+                        apply = new { applyCount, applyMoney, applyTotal, applyList },
+                        pay = new { payCount, payMoney, payTotal, payList }
+                    };
+                case "1":
+                    applyList = staffDao.GetPayList(getApplyListParam.userId, "0", getApplyListParam.payType);
+                    payList = staffDao.GetPayList(getApplyListParam.userId, "1", getApplyListParam.payType);
+
+                    foreach (PayItem payItem in applyList)
+                    {
+                        applyCount += payItem.count;
+                        applyMoney += payItem.money;
+                        applyTotal += payItem.total;
+                    }
+
+                    foreach (PayItem payItem in payList)
+                    {
+                        payCount += payItem.count;
+                        payMoney += payItem.money;
+                        payTotal += payItem.total;
+                    }
+
+                    return new
+                    {
+                        apply = new { applyCount, applyMoney, applyTotal, applyList },
+                        pay = new { payCount, payMoney, payTotal, payList }
+                    };
+                default:
+                    throw new ApiException(CodeMessage.InvalidPayType, "InvalidPayType");
+            }
+            
+        }
+
+        public object Do_GetUserPayRecordList(BaseApi baseApi)
+        {
+            GetUserPayRecordListParam getUserPayRecordListParam = JsonConvert.DeserializeObject<GetUserPayRecordListParam>(baseApi.param.ToString());
+            if (getUserPayRecordListParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
 
-            foreach (PayItem payItem in payList)
+            StaffDao staffDao = new StaffDao();
+            List<RecordUserPayItem> list = staffDao.GetPayRecordList(
+                getUserPayRecordListParam.guid, 
+                getUserPayRecordListParam.payType);
+
+            if(list == null || list.Count == 0)
             {
-                payCount += payItem.count;
-                payMoney += payItem.money;
-                payTotal += payItem.total;
+                throw new ApiException(CodeMessage.InvalidGuidOrPayType, "InvalidGuidOrPayType");
             }
 
-            return new
+            switch(getUserPayRecordListParam.payType)
             {
-                apply = new { applyCount, applyMoney, applyTotal, applyList },
-                pay = new { payCount, payMoney, payTotal, payList }
-            };
+                case "0":
+                    return staffDao.GetPayInfo(getUserPayRecordListParam.guid, list);
+                case "1":
+                    return staffDao.GetBankcardInfo(getUserPayRecordListParam.guid, list);
+                default:
+                    throw new ApiException(CodeMessage.InvalidPayType, "InvalidPayType");
+            }
         }
     }
 }

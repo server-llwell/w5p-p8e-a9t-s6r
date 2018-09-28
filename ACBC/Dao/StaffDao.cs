@@ -172,6 +172,29 @@ namespace ACBC.Dao
             return scanCodeResult;
         }
 
+        public ScanCodeResult GetUserPayInfo(string scanCode)
+        {
+            ScanCodeResult scanCodeResult = new ScanCodeResult();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_BY_SCAN_CODE, scanCode);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                scanCodeResult = new ScanCodeResult
+                {
+                    resultType = "USER",
+                    resultKey = dt.Rows[0]["GUID"].ToString(),
+                    resultTitle = dt.Rows[0]["USER_NAME"].ToString() + " " + dt.Rows[0]["USER_PHONE"].ToString(),
+                    resultMoney = Convert.ToDouble(dt.Rows[0]["MONEY"]),
+                    resultUser = dt.Rows[0]["USER_ID"].ToString(),
+                };
+
+            }
+
+            return scanCodeResult;
+        }
+
         public Staff GetStaffByOpenID(string openId)
         {
             Staff staff = null;
@@ -240,41 +263,11 @@ namespace ACBC.Dao
             return true;
         }
 
-        public List<PayItem> GetApplyListByUserId(string userId)
+        public List<PayItem> GetPayList(string userId, string payState, string payType)
         {
             List<PayItem> list = new List<PayItem>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "0", "0");
-            string sql = builder.ToString();
-            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                foreach(DataRow dr in dt.Rows)
-                {
-                    PayItem payItem = new PayItem
-                    {
-                        payName = dr["USER_NAME"].ToString() + " " + dr["USER_PHONE"].ToString(),
-                        count = Convert.ToInt32(dr["COUNT"]),
-                        money = Convert.ToDouble(dr["MONEY"]),
-                        total = Convert.ToDouble(dr["TOTAL"]),
-                        applyTime = dr["APPLY_TIME"].ToString(),
-                        payTime = dr["PAY_TIME"].ToString(),
-                        addr = dr["ADDR"].ToString(),
-                        guid = dr["GUID"].ToString(),
-                    };
-                    list.Add(payItem);
-                }
-                
-            }
-
-            return list;
-        }
-
-        public List<PayItem> GetPayListByUserId(string userId)
-        {
-            List<PayItem> list = new List<PayItem>();
-            StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, "1", "0");
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, payState, payType);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -291,6 +284,7 @@ namespace ACBC.Dao
                         payTime = dr["PAY_TIME"].ToString(),
                         addr = dr["ADDR"].ToString(),
                         guid = dr["GUID"].ToString(),
+                        payImg = dr["PAY_IMG"].ToString(),
                     };
                     list.Add(payItem);
                 }
@@ -298,6 +292,205 @@ namespace ACBC.Dao
             }
 
             return list;
+        }
+
+        public List<RecordUserPayItem> GetPayRecordList(string guid, string payType)
+        {
+            switch(payType)
+            {
+                case "0":
+                    return getPay(guid);
+                case "1":
+                    return getBunkcardPay(guid);
+                default:
+                    return null;
+            }
+        }
+
+        private List<RecordUserPayItem> getPay(string guid)
+        {
+            List<RecordUserPayItem> list = new List<RecordUserPayItem>();
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUser = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtShopAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_AGENT_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUserAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+
+            int count = 0;
+            double money = 0;
+            double total = 0;
+            foreach (DataRow dr in dtUser.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["USER_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["USER_MONEY"]),
+                };
+                count ++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+            foreach (DataRow dr in dtShopAgent.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["SHOP_AGENT_MONEY"]),
+                };
+                count++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+            foreach (DataRow dr in dtUserAgent.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["USER_AGENT_MONEY"]),
+                };
+                count++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+
+            return list;
+        }
+
+        private List<RecordUserPayItem> getBunkcardPay(string guid)
+        {
+            List<RecordUserPayItem> list = new List<RecordUserPayItem>();
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUser = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtShopAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID, guid);
+            sql = builder.ToString();
+            DataTable dtUserAgent = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+
+            int count = 0;
+            double money = 0;
+            double total = 0;
+            foreach (DataRow dr in dtUser.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["USER_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["USER_RMB_MONEY"]),
+                };
+                count++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+            foreach (DataRow dr in dtShopAgent.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["SHOP_AGENT_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["SHOP_AGENT_RMB_MONEY"]),
+                };
+                count++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+            foreach (DataRow dr in dtUserAgent.Rows)
+            {
+                RecordUserPayItem recordUserPayItem = new RecordUserPayItem
+                {
+                    recordTime = dr["RECORD_TIME"].ToString(),
+                    total = Convert.ToInt32(dr["TOTAL"]),
+                    rate = (Convert.ToDouble(dr["USER_AGENT_RATE"]) * 100).ToString() + "%",
+                    money = Convert.ToDouble(dr["USER_AGENT_RMB_MONEY"]),
+                };
+                count++;
+                money += recordUserPayItem.money;
+                total += recordUserPayItem.total;
+                list.Add(recordUserPayItem);
+            }
+
+            return list;
+        }
+
+        public PayInfo GetPayInfo(string guid, List<RecordUserPayItem> list)
+        {
+            PayInfo payInfo = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_BUSS_PAY_BY_GUID, guid);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                payInfo = new PayInfo
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString() + " " + dt.Rows[0]["USER_PHONE"].ToString(),
+                    addr = dt.Rows[0]["ADDR"].ToString(),
+                    applyTime = dt.Rows[0]["APPLY_TIME"].ToString(),
+                    payTime = dt.Rows[0]["PAY_TIME"].ToString(),
+                    total = Convert.ToDouble(dt.Rows[0]["TOTAL"]),
+                    money = Convert.ToDouble(dt.Rows[0]["MONEY"]),
+                    count = Convert.ToInt32(dt.Rows[0]["COUNT"]),
+                    list = list,
+                };
+            }
+
+            return payInfo;
+        }
+
+        public BankcardInfo GetBankcardInfo(string guid, List<RecordUserPayItem> list)
+        {
+            BankcardInfo bankcardInfo = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StaffSqls.SELECT_BUSS_PAY_BANKCARD_BY_GUID, guid);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                bankcardInfo = new BankcardInfo
+                {
+                    userName = dt.Rows[0]["USER_NAME"].ToString() + " " + dt.Rows[0]["USER_PHONE"].ToString(),
+                    applyTime = dt.Rows[0]["APPLY_TIME"].ToString(),
+                    payTime = dt.Rows[0]["PAY_TIME"].ToString(),
+                    total = Convert.ToDouble(dt.Rows[0]["TOTAL"]),
+                    money = Convert.ToDouble(dt.Rows[0]["MONEY"]),
+                    count = Convert.ToInt32(dt.Rows[0]["COUNT"]),
+                    bankcardCode = dt.Rows[0]["BANKCARD_CODE"].ToString(),
+                    bankName = dt.Rows[0]["BANK_NAME"].ToString(),
+                    bankcardUserName = dt.Rows[0]["BANKCARD_USER_NAME"].ToString(),
+                    subName = dt.Rows[0]["SUB_NAME"].ToString(),
+                    payImg = dt.Rows[0]["PAY_IMG"].ToString(),
+                    list = list,
+                };
+            }
+
+            return bankcardInfo;
         }
     }
 
@@ -347,6 +540,15 @@ namespace ACBC.Dao
             + "AND T.SHOP_ID = B.SHOP_ID "
             + "AND B.SHOP_CODE = {0} "
             + "GROUP BY A.SHOP_ID,A.SHOP_NAME_ZH,B.SHOP_USER_ID ";
+        public const string SELECT_RECORD_USER_BY_SCAN_CODE = ""
+            + "SELECT * "
+            + "FROM T_BUSS_PAY T,T_BASE_USER A "
+            + "WHERE A.USER_ID = T.USER_ID "
+            + "AND A.SCAN_CODE = '{0}' "
+            + "AND PAY_STATE = 0 "
+            + "AND PAY_TYPE = 0 "
+            + "ORDER BY APPLY_TIME "
+            + "LIMIT 1";
         public const string UPDATE_RECORD_SHOP_PAY_BY_SHOP_ID = ""
             + "UPDATE T_BUSS_RECORD "
             + "SET SHOP_PAY_TIME = NOW(), "
@@ -373,5 +575,40 @@ namespace ACBC.Dao
             + "AND PAY_TYPE = {2} "
             + "AND PAY_STATE = {1} "
             + "AND T.USER_ID = A.USER_ID ";
+        public const string SELECT_RECORD_USER_SUM_BY_GUID = ""
+             + "SELECT * "
+             + "FROM T_BUSS_RECORD "
+             + "WHERE USER_PAY_GUID = '{0}' AND USER_PAY_TYPE = 0";
+        public const string SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 0";
+        public const string SELECT_RECORD_USER_AGENT_SUM_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 0";
+        public const string SELECT_RECORD_USER_RMB_SUM_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_PAY_GUID = '{0}' AND USER_PAY_TYPE = 1";
+        public const string SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 1";
+        public const string SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_RECORD "
+            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 1";
+        public const string SELECT_BUSS_PAY_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_PAY A, T_BASE_USER B "
+            + "WHERE GUID = '{0}' "
+            + "AND A.USER_ID = B.USER_ID";
+        public const string SELECT_BUSS_PAY_BANKCARD_BY_GUID = ""
+            + "SELECT * "
+            + "FROM T_BUSS_PAY A,T_BASE_BANKCARD B,T_BASE_USER C "
+            + "WHERE GUID = '{0}' "
+            + "AND A.PAY_BANKCARD_ID = B.BANKCARD_ID "
+            + "AND C.USER_ID = A.USER_ID";
     }
 }
