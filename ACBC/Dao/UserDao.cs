@@ -721,20 +721,20 @@ namespace ACBC.Dao
             foreach (DataRow dr in dtUser.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
             foreach (DataRow dr in dtShopAgent.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
             foreach (DataRow dr in dtUserAgent.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
 
             return paySumCount;
@@ -763,20 +763,20 @@ namespace ACBC.Dao
             foreach (DataRow dr in dtUser.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
             foreach (DataRow dr in dtShopAgent.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
             foreach (DataRow dr in dtUserAgent.Rows)
             {
                 paySumCount.count += Convert.ToInt32(dr["NUM"]);
-                paySumCount.money += Convert.ToDouble(dr["MONEY"]);
-                paySumCount.total += Convert.ToDouble(dr["TOTAL"]);
+                paySumCount.money += dr["MONEY"] == DBNull.Value ? 0 : Convert.ToDouble(dr["MONEY"]);
+                paySumCount.total += dr["TOTAL"] == DBNull.Value ? 0 : Convert.ToDouble(dr["TOTAL"]);
             }
 
             return paySumCount;
@@ -794,7 +794,6 @@ namespace ACBC.Dao
         {
             StringBuilder builder = new StringBuilder();
             string sql;
-            ArrayList list = new ArrayList();
             switch (userType)
             {
                 case "0":
@@ -808,7 +807,7 @@ namespace ACBC.Dao
                         exRate
                     );
                     sql = builder.ToString();
-                    list.Add(sql);
+                    DatabaseOperationWeb.ExecuteDML(sql);
                     builder.Clear();
                     if (payType == "0")
                     {
@@ -840,8 +839,7 @@ namespace ACBC.Dao
                          );
                     }
                     sql = builder.ToString();
-                    list.Add(sql);
-                    return DatabaseOperationWeb.ExecuteDML(list);
+                    return DatabaseOperationWeb.ExecuteDML(sql);
                 case "1":
                     builder.AppendFormat(
                         UserSqls.UPDATE_RECORD_SHOP_AGENT_PAY_GUID,
@@ -853,7 +851,7 @@ namespace ACBC.Dao
                         exRate
                     );
                     sql = builder.ToString();
-                    list.Add(sql);
+                    DatabaseOperationWeb.ExecuteDML(sql);
                     builder.Clear();
                     builder.AppendFormat(
                         UserSqls.UPDATE_RECORD_USER_AGENT_PAY_GUID,
@@ -865,7 +863,7 @@ namespace ACBC.Dao
                         exRate
                     );
                     sql = builder.ToString();
-                    list.Add(sql);
+                    DatabaseOperationWeb.ExecuteDML(sql);
                     builder.Clear();
                     if (payType == "0")
                     {
@@ -897,8 +895,7 @@ namespace ACBC.Dao
                          );
                     }
                     sql = builder.ToString();
-                    list.Add(sql);
-                    return DatabaseOperationWeb.ExecuteDML(list);
+                    return DatabaseOperationWeb.ExecuteDML(sql);
                 default:
                     return false;
             }
