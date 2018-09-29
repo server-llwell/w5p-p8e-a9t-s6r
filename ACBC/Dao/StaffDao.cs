@@ -584,7 +584,7 @@ namespace ACBC.Dao
             + "WHERE PAY_STATE = 0 "
             + "AND T.SHOP_ID = A.SHOP_ID "
             + "AND T.SHOP_ID = B.SHOP_ID "
-            + "AND B.SHOP_CODE = {0} "
+            + "AND B.SHOP_CODE = '{0}' "
             + "GROUP BY A.SHOP_ID,A.SHOP_NAME_ZH,B.SHOP_USER_ID ";
         public const string SELECT_RECORD_USER_BY_SCAN_CODE = ""
             + "SELECT * "
