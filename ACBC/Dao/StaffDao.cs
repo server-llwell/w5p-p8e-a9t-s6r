@@ -175,7 +175,7 @@ namespace ACBC.Dao
 
         public ScanCodeResult GetUserPayInfo(string scanCode)
         {
-            ScanCodeResult scanCodeResult = new ScanCodeResult();
+            ScanCodeResult scanCodeResult = null;
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(StaffSqls.SELECT_RECORD_USER_BY_SCAN_CODE, scanCode);
             string sql = builder.ToString();
