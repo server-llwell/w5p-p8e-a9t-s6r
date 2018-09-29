@@ -152,7 +152,7 @@ namespace ACBC.Dao
 
         public ScanCodeResult GetShopPayInfo(string scanCode)
         {
-            ScanCodeResult scanCodeResult = new ScanCodeResult();
+            ScanCodeResult scanCodeResult = null;
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(StaffSqls.SELECT_RECORD_SHOP_BY_SHOP_CODE, scanCode);
             string sql = builder.ToString();
