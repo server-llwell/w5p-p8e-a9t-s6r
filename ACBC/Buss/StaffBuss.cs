@@ -168,7 +168,12 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.ShopPayError, "ShopPayError");
             }
-
+            WsPayState wsPayState = new WsPayState
+            {
+                scanCode = shopPayParam.scanCode,
+                userId = shopPayParam.shopUserId,
+            };
+            Utils.SetCache(shopPayParam.scanCode, wsPayState, 0, 0, 10);
             return "";
         }
 
@@ -191,8 +196,8 @@ namespace ACBC.Buss
             switch (getApplyListParam.payType)
             {
                 case "0":
-                    applyList = staffDao.GetPayList(getApplyListParam.userId, "0", getApplyListParam.payType);
-                    payList = staffDao.GetPayList(getApplyListParam.userId, "1", getApplyListParam.payType);
+                    applyList = staffDao.GetPayList("0", getApplyListParam.payType);
+                    payList = staffDao.GetPayList("1", getApplyListParam.payType);
 
                     foreach (PayItem payItem in applyList)
                     {
@@ -214,8 +219,8 @@ namespace ACBC.Buss
                         pay = new { payCount, payMoney, payTotal, payList }
                     };
                 case "1":
-                    applyList = staffDao.GetPayList(getApplyListParam.userId, "0", getApplyListParam.payType);
-                    payList = staffDao.GetPayList(getApplyListParam.userId, "1", getApplyListParam.payType);
+                    applyList = staffDao.GetPayList("0", getApplyListParam.payType);
+                    payList = staffDao.GetPayList("1", getApplyListParam.payType);
 
                     foreach (PayItem payItem in applyList)
                     {
@@ -269,6 +274,33 @@ namespace ACBC.Buss
                 default:
                     throw new ApiException(CodeMessage.InvalidPayType, "InvalidPayType");
             }
+        }
+
+        public object Do_UserPay(BaseApi baseApi)
+        {
+            UserPayParam userPayParam = JsonConvert.DeserializeObject<UserPayParam>(baseApi.param.ToString());
+            if (userPayParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            StaffDao staffDao = new StaffDao();
+            Staff staff = staffDao.GetStaffByOpenID(Utils.GetOpenID(baseApi.token));
+            if (staff == null)
+            {
+                throw new ApiException(CodeMessage.StaffNotExist, "StaffNotExist");
+            }
+            if (!staffDao.UserPay(userPayParam.guid, staff.staffId, userPayParam.userId))
+            {
+                throw new ApiException(CodeMessage.UserPayError, "UserPayError");
+            }
+            WsPayState wsPayState = new WsPayState
+            {
+                scanCode = userPayParam.scanCode,
+                userId = userPayParam.userId,
+            };
+            Utils.SetCache(userPayParam.scanCode, wsPayState, 0, 0, 10);
+            return "";
         }
     }
 }

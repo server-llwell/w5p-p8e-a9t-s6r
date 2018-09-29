@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -260,14 +261,25 @@ namespace ACBC.Dao
             {
                 return false;
             }
+            builder.Clear();
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(shopUserId + new Random().Next()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+            builder.AppendFormat(StaffSqls.UPDATE_SHOP_QRCODE, scanCode, shopUserId);
+            string sql = builder.ToString();
+            DatabaseOperationWeb.ExecuteDML(sql);
             return true;
         }
 
-        public List<PayItem> GetPayList(string userId, string payState, string payType)
+        public List<PayItem> GetPayList(string payState, string payType)
         {
             List<PayItem> list = new List<PayItem>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, userId, payState, payType);
+            builder.AppendFormat(StaffSqls.SELECT_APPLY_LIST_BY_USER_ID, payState, payType);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count > 0)
@@ -492,6 +504,40 @@ namespace ACBC.Dao
 
             return bankcardInfo;
         }
+
+        public bool UserPay(string guid, string staffId, string userId)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            string sql;
+            builder.AppendFormat(StaffSqls.UPDATE_RECORD_USER_PAY_STATE_BY_GUID, guid);
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.UPDATE_RECORD_SHOP_AGENT_PAY_STATE_BY_GUID, guid);
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.UPDATE_RECORD_USER_AGENT_PAY_STATE_BY_GUID, guid);
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(StaffSqls.UPDATE_BUSS_PAY_STATE_BY_GUID, guid, staffId);
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(userId + new Random().Next()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+            builder.AppendFormat(StaffSqls.UPDATE_USER_QRCODE, scanCode, userId);
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
     }
 
     public class StaffSqls
@@ -571,9 +617,8 @@ namespace ACBC.Dao
         public const string SELECT_APPLY_LIST_BY_USER_ID = ""
             + "SELECT * "
             + "FROM T_BUSS_PAY T, T_BASE_USER A "
-            + "WHERE A.USER_ID = {0} "
-            + "AND PAY_TYPE = {2} "
-            + "AND PAY_STATE = {1} "
+            + "WHERE PAY_TYPE = {1} "
+            + "AND PAY_STATE = {0} "
             + "AND T.USER_ID = A.USER_ID ";
         public const string SELECT_RECORD_USER_SUM_BY_GUID = ""
              + "SELECT * "
@@ -610,5 +655,42 @@ namespace ACBC.Dao
             + "WHERE GUID = '{0}' "
             + "AND A.PAY_BANKCARD_ID = B.BANKCARD_ID "
             + "AND C.USER_ID = A.USER_ID";
+        public const string UPDATE_RECORD_USER_PAY_STATE_BY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET USER_PAY_TIME = NOW(), "
+            + "USER_PAY_STATE = 2 "
+            + "WHERE USER_PAY_GUID = '{0}' "
+            + "AND USER_PAY_STATE = 1 "
+            + "AND USER_PAY_TYPE = 0";
+        public const string UPDATE_RECORD_SHOP_AGENT_PAY_STATE_BY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET SHOP_AGENT_PAY_TIME = NOW(), "
+            + "SHOP_AGENT_PAY_STATE = 2 "
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' "
+            + "AND SHOP_AGENT_PAY_STATE = 1 "
+            + "AND SHOP_AGENT_PAY_TYPE = 0";
+        public const string UPDATE_RECORD_USER_AGENT_PAY_STATE_BY_GUID = ""
+            + "UPDATE T_BUSS_RECORD "
+            + "SET USER_AGENT_PAY_TIME = NOW(), "
+            + "USER_AGENT_PAY_STATE = 2 "
+            + "WHERE USER_AGENT_PAY_GUID = '{0}' "
+            + "AND USER_AGENT_PAY_STATE = 1 "
+            + "AND USER_AGENT_PAY_TYPE = 0";
+        public const string UPDATE_BUSS_PAY_STATE_BY_GUID = ""
+            + "UPDATE T_BUSS_PAY "
+            + "SET PAY_TIME = NOW(), "
+            + "PAY_STATE = 1, "
+            + "STAFF_ID = {1} "
+            + "WHERE PAY_STATE = 0 "
+            + "AND GUID = '{0}'"
+            + "AND PAY_TYPE = 0";
+        public const string UPDATE_USER_QRCODE = ""
+            + "UPDATE T_BASE_USER "
+            + "SET SCAN_CODE = '{0}' "
+            + "WHERE USER_ID = {1} ";
+        public const string UPDATE_SHOP_QRCODE = ""
+            + "UPDATE T_BASE_SHOP_USER "
+            + "SET SHOP_CODE = '{0}' "
+            + "WHERE SHOP_USER_ID = {1} ";
     }
 }

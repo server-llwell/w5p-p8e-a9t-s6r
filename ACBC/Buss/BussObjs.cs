@@ -175,11 +175,19 @@ namespace ACBC.Buss
     {
         public string shopId;
         public string shopUserId;
+        public string scanCode;
+    }
+
+    public class UserPayParam
+    {
+        public string guid;
+        public string userId;
+        public string scanCode;
     }
 
     public class GetApplyListParam
     {
-        public string userId;
+        //public string userId;
         public string payType;
     }
 

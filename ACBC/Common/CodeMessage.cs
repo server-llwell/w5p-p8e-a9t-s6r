@@ -64,5 +64,6 @@ namespace ACBC.Common
         StaffNotExist = 10603,
         InvalidPayType = 10604,
         InvalidGuidOrPayType = 10605,
+        UserPayError = 10606,
     }
 }
