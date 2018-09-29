@@ -627,11 +627,11 @@ namespace ACBC.Dao
         public const string SELECT_RECORD_SHOP_AGENT_SUM_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
-            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 0";
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND SHOP_AGENT_PAY_TYPE = 0";
         public const string SELECT_RECORD_USER_AGENT_SUM_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
-            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 0";
+            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_AGENT_PAY_TYPE = 0";
         public const string SELECT_RECORD_USER_RMB_SUM_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
@@ -639,11 +639,11 @@ namespace ACBC.Dao
         public const string SELECT_RECORD_SHOP_AGENT_RMB_SUM_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
-            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 1";
+            + "WHERE SHOP_AGENT_PAY_GUID = '{0}' AND SHOP_AGENT_PAY_TYPE = 1";
         public const string SELECT_RECORD_USER_AGENT_RMB_SUM_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_RECORD "
-            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_PAY_TYPE = 1";
+            + "WHERE USER_AGENT_PAY_GUID = '{0}' AND USER_AGENT_PAY_TYPE = 1";
         public const string SELECT_BUSS_PAY_BY_GUID = ""
             + "SELECT * "
             + "FROM T_BUSS_PAY A, T_BASE_USER B "
