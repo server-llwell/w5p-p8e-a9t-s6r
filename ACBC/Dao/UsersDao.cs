@@ -254,8 +254,8 @@ namespace ACBC.Dao
             + "AND B.STATE > 0";
         public const string INSERT_BIND_SHOP = ""
             + "INSERT INTO T_BASE_SHOP_USER"
-            + "(SHOP_USER_NAME,SHOP_USER_IMG,SHOP_USER_OPENID,SHOP_ID) "
-            + "VALUES('{0}','{1}','{2}','{3}')";
+            + "(SHOP_USER_NAME,SHOP_USER_IMG,SHOP_USER_OPENID,SHOP_ID,SHOP_CODE) "
+            + "VALUES('{0}','{1}','{2}','{3}','{2}')";
         public const string UPDATE_BIND_SHOP_CODE = ""
             + "UPDATE T_BUSS_SHOP_CODE "
             + "SET STATE = STATE - 1 "
