@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Common
@@ -45,6 +46,14 @@ namespace ACBC.Common
         public abstract CheckType GetCheckType();
         public abstract ApiType GetApiType();
         public abstract InputType GetInputType();
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("{2}\n\rmethod:{0}\n\rparam:{1}", method, param, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            string rets = builder.ToString();
+            return rets;
+        }
     }
 
     /// <summary>

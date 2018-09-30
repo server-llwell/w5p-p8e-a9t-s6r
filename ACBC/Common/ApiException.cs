@@ -15,7 +15,7 @@ namespace ACBC.Common
             this.code = code;
             this.msg = msg;
 
-            Console.WriteLine(msg);
+            //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\n\r" + msg);
         }
     }
 }

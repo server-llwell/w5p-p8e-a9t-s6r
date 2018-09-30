@@ -184,6 +184,7 @@ namespace ACBC.Buss
         /// <returns></returns>
         public object BussResults(Controller controller, BaseApi baseApi)
         {
+            Console.WriteLine(baseApi.ToString());
             switch (baseApi.GetInputType())
             {
                 case InputType.Header:
@@ -347,8 +348,8 @@ namespace ACBC.Buss
                         message = new Message(CodeMessage.InnerError, "InnerError");
                     }
                 }
-
-                return new ResultsJson(message, data);
+                ResultsJson resultsJson = new ResultsJson(message, data);
+                return resultsJson;
             }
         }
 

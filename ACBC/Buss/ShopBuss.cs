@@ -53,8 +53,9 @@ namespace ACBC.Buss
             }
 
             ShopDao shopDao = new ShopDao();
-            Shop shop = shopDao.GetShop(submitParam.shopId);
-            if(shop == null)
+            //Shop shop = shopDao.GetShop(submitParam.shopId);
+            Shop shop = shopDao.GetShopByOpenID(Utils.GetOpenID(baseApi.token), baseApi.lang);
+            if (shop == null)
             {
                 throw new ApiException(CodeMessage.InvalidShopId, "InvalidShopId");
             }

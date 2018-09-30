@@ -67,10 +67,15 @@ namespace ACBC.Controllers
         {
             if (!hc.WebSockets.IsWebSocketRequest)
                 return;
-
-            var socket = await hc.WebSockets.AcceptWebSocketAsync();
-            var h = new SocketController(socket);
-            await h.EchoLoop();
+            try
+            {
+                var socket = await hc.WebSockets.AcceptWebSocketAsync();
+                var h = new SocketController(socket);
+                await h.EchoLoop();
+            }
+            catch
+            { }
+            
         }
 
         /// <summary>
