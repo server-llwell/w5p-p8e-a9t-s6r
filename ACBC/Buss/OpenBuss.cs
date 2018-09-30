@@ -102,6 +102,7 @@ namespace ACBC.Buss
                         userName = user.userName,
                         userImg = user.userImg,
                         userType = user.userType,
+                        sex = user.sex,
                     };
                 }
                 else

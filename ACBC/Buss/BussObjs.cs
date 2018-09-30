@@ -222,6 +222,7 @@ namespace ACBC.Buss
         public string phone;
         public string userType;
         public string scanCode;
+        public string sex;
     }
 
     public class Staff

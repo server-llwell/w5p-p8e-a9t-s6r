@@ -89,6 +89,7 @@ namespace ACBC.Dao
                     userImg = dt.Rows[0]["USER_IMG"].ToString(),
                     phone = dt.Rows[0]["USER_PHONE"].ToString(),
                     userType = dt.Rows[0]["USER_TYPE"].ToString(),
+                    sex = dt.Rows[0]["SEX"].ToString(),
                 };
             }
 
@@ -156,7 +157,8 @@ namespace ACBC.Dao
                 scanCode,
                 agentId,
                 userRegParam.phone,
-                userRegParam.userType);
+                userRegParam.userType,
+                userRegParam.gender);
             string sqlInsert = builder.ToString();
             builder = new StringBuilder();
             builder.AppendFormat(UsersSqls.UPDATE_USER_REG_AGENT_CODE,
@@ -276,8 +278,8 @@ namespace ACBC.Dao
             + "AND AGENT_STATE > 0";
         public const string INSERT_USER_REG = ""
             + "INSERT INTO T_BASE_USER"
-            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE,USER_TYPE) "
-            + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}',{6})";
+            + "(OPENID,USER_NAME,USER_IMG,SCAN_CODE,USER_AGENT,USER_PHONE,USER_TYPE,SEX) "
+            + "VALUES('{0}','{1}','{2}','{3}',{4},'{5}',{6},'{7}')";
         public const string UPDATE_STAFF_REG = ""
             + "UPDATE T_BASE_STAFF "
             + "SET OPENID = '{0}',"
