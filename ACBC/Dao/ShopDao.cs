@@ -69,8 +69,12 @@ namespace ACBC.Dao
                 {
                     shopName = dt.Rows[0]["SHOP_NAME_" + lang.ToUpper()].ToString(),
                     shopId = dt.Rows[0]["SHOP_ID"].ToString(),
-                    shopRate = (double)dt.Rows[0]["SHOP_RATE"],
                     shopCode = dt.Rows[0]["SHOP_CODE"].ToString(),
+                    shopRate = (double)dt.Rows[0]["SHOP_RATE"],
+                    userRate = (double)dt.Rows[0]["USER_RATE"],
+                    shopAgentRate = (double)dt.Rows[0]["SHOP_AGENT_RATE"],
+                    userAgentRate = (double)dt.Rows[0]["USER_AGENT_RATE"],
+                    platformRate = (double)dt.Rows[0]["PLATFORM_RATE"],
                 };
             }
 

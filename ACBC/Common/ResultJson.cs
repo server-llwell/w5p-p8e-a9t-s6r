@@ -39,7 +39,7 @@ namespace ACBC.Common
                 this.success = true;
                 this.msg = new Message(CodeMessage.OK, "OK");
             }
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\n\r" + "Message:" + this.msg.msg);
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\r" + "Message:" + this.msg.msg);
             this.data = data;
         }
 
