@@ -50,7 +50,7 @@ namespace ACBC.Common
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("{2}\rmethod:{0}\rparam:{1}", method, param, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            builder.AppendFormat("{2}; method:{0}; param:{1}", method, param, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             string rets = builder.ToString();
             return rets;
         }

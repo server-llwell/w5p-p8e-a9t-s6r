@@ -59,6 +59,7 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.InvalidShopId, "InvalidShopId");
             }
+            submitParam.shopId = shop.shopId;
             User user = shopDao.GetUserById(submitParam.userId);
             if (user == null)
             {

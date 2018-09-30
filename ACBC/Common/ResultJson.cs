@@ -39,7 +39,7 @@ namespace ACBC.Common
                 this.success = true;
                 this.msg = new Message(CodeMessage.OK, "OK");
             }
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\r" + "Message:" + this.msg.msg);
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "; " + "Message:" + this.msg.msg);
             this.data = data;
         }
 
@@ -50,7 +50,7 @@ namespace ACBC.Common
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("Message:{0}\n\rdata:{1}", msg.msg, JsonConvert.SerializeObject(data));
+            builder.AppendFormat("Message:{0}; data:{1}", msg.msg, JsonConvert.SerializeObject(data));
             string rets = builder.ToString();
             return rets;
         }
