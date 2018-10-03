@@ -184,6 +184,7 @@ namespace ACBC.Buss
         /// <returns></returns>
         public object BussResults(Controller controller, BaseApi baseApi)
         {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "; " + Global.ROUTE_PX + "/" + controller.RouteData.Values["controller"] + "/" + controller.RouteData.Values["action"]);
             Console.WriteLine(baseApi.ToString());
             switch (baseApi.GetInputType())
             {
